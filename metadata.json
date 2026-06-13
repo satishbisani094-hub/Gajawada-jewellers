@@ -1,0 +1,6 @@
+{
+  "name": "Gajawada Jewellers",
+  "description": "A premium, modern, luxury jewelry website for Gajawada Jewellers, presenting exquisite gold, diamond, bridal, and customized traditional collections in Hyderabad.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

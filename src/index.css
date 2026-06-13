@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+  --font-serif: "Cinzel", "Playfair Display", Georgia, serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  /* Premium Luxury Gold & Charcoal Color Palette */
+  --color-gold-50: #fbf9f4;
+  --color-gold-100: #f5eedb;
+  --color-gold-200: #ead9b3;
+  --color-gold-300: #d8bf80;
+  --color-gold-400: #c4a157;
+  --color-gold-500: #b58d3d;
+  --color-gold-600: #9c732c;
+  --color-gold-700: #7c5820;
+  --color-gold-800: #62431b;
+  --color-gold-900: #4e3417;
+  --color-gold-950: #2e1d0c;
+
+  --color-lux-cream: #faf7f2;
+  --color-lux-sand: #f0e6d6;
+}
+
+/* Custom premium scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #111111;
+}
+::-webkit-scrollbar-thumb {
+  background: #b58d3d;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9c732c;
+}
+
+/* Luxury animations and transitions */
+.luxury-shadow {
+  box-shadow: 0 10px 40px -15px rgba(181, 141, 61, 0.15);
+}
+
+.luxury-border {
+  border: 1px solid rgba(181, 141, 61, 0.18);
+}
+
+.luxury-border-hover:hover {
+  border-color: rgba(181, 141, 61, 0.45);
+}
+
+.glassmorphism {
+  background: rgba(17, 17, 17, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glassmorphism-light {
+  background: rgba(250, 247, 242, 0.8);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(181, 141, 61, 0.15);
+}
+
+/* Infinite text crawl for gold rates */
+@keyframes ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-ticker {
+  display: flex;
+  width: max-content;
+  animation: ticker 35s linear infinite;
+}
+
+.animate-ticker:hover {
+  animation-play-state: paused;
+}
+
+html {
+  scroll-behavior: smooth;
+}
