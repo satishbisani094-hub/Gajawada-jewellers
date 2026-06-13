@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Search, Heart, ShieldCheck, HelpCircle, MessageSquare, X, Tag } from 'lucide-react';
 import ImageCarousel from './ImageCarousel';
+import GalleryCarousel from './GalleryCarousel';
 import { collectionCategories } from '../data/jewelryData';
 import { Product } from '../types';
 
@@ -72,6 +73,7 @@ export default function Collections({
 
       {/* Main Content Container */}
       <div className="max-w-7xl mx-auto px-4 md:px-6">
+        <GalleryCarousel />
         
         {/* Module Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 text-left">
