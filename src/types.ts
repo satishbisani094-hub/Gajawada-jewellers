@@ -8,6 +8,7 @@ export interface Product {
   category: string;
   description: string;
   imageUrl: string;
+  imageUrls?: string[];
   purity: string; // e.g., "22K Gold", "18K Gold", "Certified Diamond (VVS-EF)"
   weight?: string; // e.g., "45 grams", "0.8 Carats"
   price?: number;

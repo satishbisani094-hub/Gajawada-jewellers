@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Search, Heart, ShieldCheck, HelpCircle, MessageSquare, ExternalLink, X, Tag } from 'lucide-react';
+import { Search, Heart, ShieldCheck, HelpCircle, MessageSquare, X, Tag } from 'lucide-react';
+import ImageCarousel from './ImageCarousel';
 import { collectionCategories } from '../data/jewelryData';
 import { Product } from '../types';
 
@@ -224,11 +225,13 @@ export default function Collections({
             <div className="grid grid-cols-1 md:grid-cols-12 gap-6 p-6 md:p-8">
               {/* Product Close up Frame */}
               <div className="md:col-span-6 bg-neutral-900 rounded overflow-hidden aspect-square flex items-center justify-center relative">
-                <img
-                  src={resolveProductImagePath(selectedProduct.imageUrl)}
-                  alt={selectedProduct.name}
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover"
+                <ImageCarousel
+                  images={
+                    (selectedProduct.imageUrls && selectedProduct.imageUrls.length > 0)
+                      ? selectedProduct.imageUrls.map(resolveProductImagePath)
+                      : [resolveProductImagePath(selectedProduct.imageUrl)]
+                  }
+                  className="w-full h-full"
                 />
                 <span className="absolute bottom-4 left-4 bg-black/80 font-mono text-[9px] font-bold text-gold-300 border border-gold-900/30 py-1 px-3 tracking-wider rounded uppercase">
                   Gajawada Jewellers Genuine Product
