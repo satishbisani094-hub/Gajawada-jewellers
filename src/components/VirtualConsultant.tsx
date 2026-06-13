@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { Sparkles, ArrowRight, RotateCcw, AlertCircle, PhoneCall, HelpCircle } from 'lucide-react';
-import { allProducts } from '../data/jewelryData';
 import { Product } from '../types';
 
 interface VirtualConsultantProps {
+  products: Product[];
   onOpenInquiryModal: (product: Product) => void;
 }
 
-export default function VirtualConsultant({ onOpenInquiryModal }: VirtualConsultantProps) {
+export default function VirtualConsultant({ products, onOpenInquiryModal }: VirtualConsultantProps) {
   const [step, setStep] = useState<number>(1);
   const [occasion, setOccasion] = useState<string>('');
   const [neckline, setNeckline] = useState<string>('');
@@ -43,16 +43,16 @@ export default function VirtualConsultant({ onOpenInquiryModal }: VirtualConsult
     let tip = '';
 
     if (occasion === 'bridal') {
-      matches = allProducts.filter(p => p.category === 'bridal-collections' || p.tags?.includes('Kundan'));
+      matches = products.filter(p => p.category === 'bridal-collections' || p.tags?.includes('Kundan'));
       tip = 'For a grand bridal look, pair a solid gold choke collar with a layered long Haram. Red or golden silk sarees look best accented with heavy Kundan and rubies.';
     } else if (occasion === 'festive') {
-      matches = allProducts.filter(p => p.category === 'temple-jewelry' || p.tags?.includes('Traditional'));
+      matches = products.filter(p => p.category === 'temple-jewelry' || p.tags?.includes('Traditional'));
       tip = 'Traditional gold temple collections matching peacock motifs perfectly echo heritage. Choose warm gold-polished earrings to emphasize standard drape borders.';
     } else if (occasion === 'reception') {
-      matches = allProducts.filter(p => p.category === 'diamond-jewelry' || p.category === 'rings');
+      matches = products.filter(p => p.category === 'diamond-jewelry' || p.category === 'rings');
       tip = 'Reception gowns and cocktail pieces stand out with cold shimmering solitaires and certified diamonds. An off-shoulder drape looks stunning with luxury drops.';
     } else {
-      matches = allProducts.filter(p => p.tags?.includes('Daily Wear') || p.category === 'kids-jewelry' || p.tags?.includes('Lightweight'));
+      matches = products.filter(p => p.tags?.includes('Daily Wear') || p.category === 'kids-jewelry' || p.tags?.includes('Lightweight'));
       tip = 'Daily workspace wear require subtle sophistication. Choose sleek interlocking neck-chains or simple stackable bands to ensure effortless grace.';
     }
 

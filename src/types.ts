@@ -10,9 +10,13 @@ export interface Product {
   imageUrl: string;
   purity: string; // e.g., "22K Gold", "18K Gold", "Certified Diamond (VVS-EF)"
   weight?: string; // e.g., "45 grams", "0.8 Carats"
+  price?: number;
+  originalPrice?: number;
   rating?: number;
+  reviewCount?: number;
   tags?: string[];
   isFeatured?: boolean;
+  isBestseller?: boolean;
 }
 
 export interface CollectionCategory {

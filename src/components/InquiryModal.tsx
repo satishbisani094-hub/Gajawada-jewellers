@@ -1,20 +1,20 @@
 import { useState, useEffect, FormEvent } from 'react';
-import { X, Calendar, User, Smartphone, Send, MessageSquare, Check, Sparkles, ShieldCheck } from 'lucide-react';
+import { X, User, Smartphone, Send, MessageSquare, Check, Sparkles, ShieldCheck } from 'lucide-react';
 import { Product } from '../types';
 
 interface InquiryModalProps {
   isOpen: boolean;
   onClose: () => void;
   product?: Product | null;
+  onClearProduct?: () => void;
 }
 
-export default function InquiryModal({ isOpen, onClose, product }: InquiryModalProps) {
+export default function InquiryModal({ isOpen, onClose, product, onClearProduct }: InquiryModalProps) {
   const [customerName, setCustomerName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [messageText, setMessageText] = useState('');
   const [isSent, setIsSent] = useState(false);
 
-  // Sync default preloaded message depending on whether a specific jewelry product was selected
   useEffect(() => {
     if (product) {
       setMessageText(
@@ -31,7 +31,6 @@ export default function InquiryModal({ isOpen, onClose, product }: InquiryModalP
     e.preventDefault();
     if (!customerName || !phoneNumber) return;
 
-    // Simulate luxury API transaction
     setIsSent(true);
 
     setTimeout(() => {
@@ -42,7 +41,13 @@ export default function InquiryModal({ isOpen, onClose, product }: InquiryModalP
     }, 4000);
   };
 
-  // Pre-fill instant WhatsApp send link fallback
+  const handleCloseFromSuccess = () => {
+    setIsSent(false);
+    setCustomerName('');
+    setPhoneNumber('');
+    onClose();
+  };
+
   const handleWhatsAppInstant = () => {
     const text = messageText || `Hi Gajawada Jewellers! I would like to request an exclusive bridal consultation or ask a question about your custom gold casting designs.`;
     const formatUrl = `https://wa.me/919573838383?text=${encodeURIComponent(text)}`;
@@ -52,8 +57,6 @@ export default function InquiryModal({ isOpen, onClose, product }: InquiryModalP
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
       <div className="relative w-full max-w-lg bg-neutral-950 border border-gold-900/40 rounded-lg overflow-hidden shadow-2xl p-6 md:p-8 text-left">
-        
-        {/* Close button icon */}
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-neutral-400 hover:text-white bg-neutral-900/50 p-1.5 rounded-full border border-neutral-800"
@@ -63,7 +66,14 @@ export default function InquiryModal({ isOpen, onClose, product }: InquiryModalP
         </button>
 
         {isSent ? (
-          <div className="text-center py-8">
+          <div className="text-center py-8 relative">
+            <button
+              onClick={handleCloseFromSuccess}
+              aria-label="Close success"
+              className="absolute top-3 right-3 text-neutral-300 hover:text-white bg-neutral-900/40 p-1.5 rounded-full border border-neutral-800"
+            >
+              <X className="w-4 h-4" />
+            </button>
             <div className="w-12 h-12 bg-green-950 border border-green-500/35 rounded-full flex items-center justify-center mx-auto mb-4 text-green-400">
               <Check className="w-6 h-6 animate-pulse" />
             </div>
@@ -79,7 +89,6 @@ export default function InquiryModal({ isOpen, onClose, product }: InquiryModalP
           </div>
         ) : (
           <div>
-            {/* Header Badge */}
             <div className="flex items-center gap-2 mb-4">
               <Sparkles className="w-4 h-4 text-gold-500" />
               <span className="text-[10px] font-sans font-bold text-gold-400 uppercase tracking-widest">
@@ -96,7 +105,18 @@ export default function InquiryModal({ isOpen, onClose, product }: InquiryModalP
 
             {product && (
               <div className="flex items-center gap-3 bg-neutral-900/50 p-3 rounded border border-neutral-900 mb-6 text-left">
-                <div className="w-10 h-10 rounded overflow-hidden aspect-square shrink-0 bg-neutral-950 border border-neutral-800">
+                <div className="w-10 h-10 rounded overflow-hidden aspect-square shrink-0 bg-neutral-950 border border-neutral-800 relative">
+                  {console.debug('InquiryModal image', { id: product.id, imageUrl: product.imageUrl })}
+                  <button
+                    onClick={() => {
+                      if (onClearProduct) onClearProduct();
+                      else onClose();
+                    }}
+                    aria-label="Clear selected product"
+                    className="absolute top-1 right-1 z-20 bg-neutral-900/60 hover:bg-neutral-900 text-neutral-200 p-1 rounded-full"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
                   <img
                     src={product.imageUrl === 'jewelry_hero_banner' ? '/src/assets/images/jewelry_hero_banner_1781324324478.jpg' : product.imageUrl === 'jewelry_diamond_ring' ? '/src/assets/images/jewelry_diamond_ring_1781324341784.jpg' : product.imageUrl}
                     alt={product.name}
@@ -189,7 +209,6 @@ export default function InquiryModal({ isOpen, onClose, product }: InquiryModalP
           <ShieldCheck className="w-3.5 h-3.5 text-gold-400" />
           <span>BIS Hallmarked • GIA/IGI Diamonds • Fully HIPAA Encrypted Secure data</span>
         </div>
-
       </div>
     </div>
   );

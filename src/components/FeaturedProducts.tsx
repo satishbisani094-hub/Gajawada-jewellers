@@ -1,14 +1,15 @@
 import { ArrowRight, Star, Heart, Check, HelpCircle } from 'lucide-react';
-import { featuredProducts } from '../data/jewelryData';
 import { Product } from '../types';
 
 interface FeaturedProductsProps {
+  products: Product[];
   shortlist: Product[];
   onToggleShortlist: (product: Product) => void;
   onOpenInquiryModal: (product: Product) => void;
 }
 
 export default function FeaturedProducts({
+  products,
   shortlist,
   onToggleShortlist,
   onOpenInquiryModal,
@@ -24,6 +25,10 @@ export default function FeaturedProducts({
     }
     return url;
   };
+
+  // Debug: log image URLs to help diagnose white/blank image issues
+  // Remove logs after debugging
+  console.debug('FeaturedProducts image paths', products.map(p => ({ id: p.id, imageUrl: p.imageUrl, resolved: resolveImagePath(p.imageUrl) })));
 
   const isShortlisted = (product: Product) => shortlist.some(item => item.id === product.id);
 
@@ -47,7 +52,7 @@ export default function FeaturedProducts({
 
         {/* Featured Products Layout: Two column spotlight split */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 text-left">
-          {featuredProducts.map((p) => (
+          {products.filter((p) => p.isFeatured).map((p) => (
             <div
               key={p.id}
               className="bg-white rounded-xl overflow-hidden border border-gold-200/30 shadow-xl hover:shadow-2xl transition-all duration-300 grid grid-cols-1 md:grid-cols-12"

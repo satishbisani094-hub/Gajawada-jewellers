@@ -1,22 +1,26 @@
 import { useState, useEffect } from 'react';
 import { Search, Heart, ShieldCheck, HelpCircle, MessageSquare, ExternalLink, X, Tag } from 'lucide-react';
-import { collectionCategories, allProducts } from '../data/jewelryData';
+import { collectionCategories } from '../data/jewelryData';
 import { Product } from '../types';
 
 interface CollectionsProps {
+  products: Product[];
   shortlist: Product[];
+  cart: Product[];
   onToggleShortlist: (product: Product) => void;
+  onAddToCart: (product: Product) => void;
   onOpenInquiryModal: (product: Product) => void;
   searchQuery: string;
 }
 
 export default function Collections({
+  products,
   shortlist,
   onToggleShortlist,
+  onAddToCart,
   onOpenInquiryModal,
   searchQuery,
 }: CollectionsProps) {
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [localSearch, setLocalSearch] = useState<string>('');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
@@ -28,16 +32,10 @@ export default function Collections({
     }
   }, [searchQuery]);
 
-  // Combine category, text search, and tag filters to update product list
+  // Combine text search and tag filters to update product list
   useEffect(() => {
-    let result = allProducts;
+    let result = products;
 
-    // 1. Filter by category
-    if (selectedCategory !== 'all') {
-      result = result.filter(p => p.category === selectedCategory);
-    }
-
-    // 2. Filter by search input
     if (localSearch.trim() !== '') {
       const q = localSearch.toLowerCase().trim();
       result = result.filter(
@@ -50,7 +48,7 @@ export default function Collections({
     }
 
     setFilteredProducts(result);
-  }, [selectedCategory, localSearch]);
+  }, [localSearch, products]);
 
   // Helper to map template image placeholders to real generated asset paths
   const resolveProductImagePath = (imgUrl: string): string => {
@@ -107,78 +105,6 @@ export default function Collections({
           </div>
         </div>
 
-        {/* Categories Horizontal Carousel Filter */}
-        <div className="mb-12 overflow-x-auto pb-4 -mx-4 px-4 scrollbar-thin scrollbar-thumb-gold-900">
-          <div className="flex gap-4 md:gap-6 min-w-max">
-            {/* "All" Pillar */}
-            <button
-              onClick={() => setSelectedCategory('all')}
-              className={`flex flex-col items-center gap-2 p-3 pb-4 rounded-lg border transition-all duration-300 w-24 md:w-28 cursor-pointer select-none ${
-                selectedCategory === 'all'
-                  ? 'border-gold-400 bg-gold-400/5'
-                  : 'border-neutral-800 hover:border-gold-500/40 bg-neutral-900/50'
-              }`}
-            >
-              <div className="w-14 h-14 rounded-full overflow-hidden flex items-center justify-center bg-gold-900/20 border border-gold-500/20">
-                <span className="font-serif text-xl font-bold text-gold-300">All</span>
-              </div>
-              <span className="text-[11px] font-sans font-bold tracking-wider uppercase text-center text-neutral-300">
-                Show All
-              </span>
-            </button>
-
-            {/* List of 10 categories requested by user */}
-            {collectionCategories.map((cat) => {
-              const isActive = selectedCategory === cat.id;
-              const resolvedCatImg = cat.id === 'bridal-collections' 
-                ? '/src/assets/images/jewelry_hero_banner_1781324324478.jpg'
-                : cat.imageUrl;
-
-              return (
-                <button
-                  key={cat.id}
-                  onClick={() => setSelectedCategory(cat.id)}
-                  className={`flex flex-col items-center gap-2 p-3 pb-4 rounded-lg border transition-all duration-300 w-24 md:w-28 cursor-pointer select-none ${
-                    isActive
-                      ? 'border-gold-400 bg-gold-400/5 shadow-lg'
-                      : 'border-neutral-800 hover:border-gold-500/40 bg-neutral-900/50'
-                  }`}
-                >
-                  <div className="w-14 h-14 rounded-full overflow-hidden border border-neutral-700">
-                    <img
-                      src={resolvedCatImg}
-                      alt={cat.name}
-                      referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover grayscale-[30%] hover:scale-110 hover:grayscale-0 transition-transform duration-300"
-                    />
-                  </div>
-                  <span className="text-[11px] font-sans font-bold tracking-wider uppercase text-center text-neutral-300 truncate w-full">
-                    {cat.name.replace('&', '\n&')}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Selected Category Insight Header banner */}
-        {selectedCategory !== 'all' && (
-          <div className="bg-neutral-900/60 p-6 rounded-lg border border-gold-900/25 text-left mb-10 luxury-shadow flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <p className="text-[10px] uppercase font-bold tracking-widest text-gold-400 mb-1">Active Category</p>
-              <h3 className="font-serif text-lg font-bold text-white uppercase tracking-wider">
-                {collectionCategories.find(c => c.id === selectedCategory)?.name}
-              </h3>
-              <p className="text-xs text-neutral-400 mt-1 max-w-xl font-sans">
-                {collectionCategories.find(c => c.id === selectedCategory)?.description}
-              </p>
-            </div>
-            <span className="text-xs font-mono font-medium text-gold-300 border border-gold-900/35 px-3 py-1.5 rounded uppercase tracking-widest shrink-0 bg-black/40">
-              {filteredProducts.length} Premium Designs
-            </span>
-          </div>
-        )}
-
         {/* Products Grid */}
         {filteredProducts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 text-left">
@@ -188,19 +114,17 @@ export default function Collections({
                 className="group bg-neutral-900/80 rounded-lg overflow-hidden border border-neutral-800/80 hover:border-gold-500/40 transition-all duration-300 shadow-xl flex flex-col h-full relative"
                 id={`product-card-${p.id}`}
               >
-                {/* Shortlist heart button */}
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     onToggleShortlist(p);
                   }}
-                  className="absolute top-4 right-4 z-20 bg-black/75 p-2 rounded-full border border-gold-900/20 text-neutral-400 hover:text-red-500 hover:scale-115 transition-all duration-200"
+                  className="absolute top-4 right-4 z-20 bg-black/75 p-2 rounded-full border border-gold-900/20 text-neutral-400 hover:text-red-500 hover:scale-105 transition-all duration-200"
                   aria-label="Add to shortlist"
                 >
                   <Heart className={`w-4 h-4 ${isShortlisted(p) ? 'text-red-500 fill-red-500' : ''}`} />
                 </button>
 
-                {/* Imagery Frame */}
                 <div
                   onClick={() => setSelectedProduct(p)}
                   className="relative aspect-square overflow-hidden bg-neutral-950 cursor-pointer"
@@ -211,10 +135,7 @@ export default function Collections({
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover grayscale-[10%] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500"
                   />
-                  {/* Subtle luxurious gold inner shadow layer */}
                   <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/70 via-transparent" />
-                  
-                  {/* Hallmark / purity overlay badge */}
                   <div className="absolute bottom-3 left-3 bg-black/80 backdrop-blur-sm border border-gold-400/20 py-0.5 px-2 rounded-sm flex items-center gap-1">
                     <ShieldCheck className="w-3 h-3 text-gold-400" />
                     <span className="text-[9px] font-sans font-bold tracking-wider uppercase text-gold-200">
@@ -223,7 +144,6 @@ export default function Collections({
                   </div>
                 </div>
 
-                {/* Info layout */}
                 <div className="p-5 flex-grow flex flex-col justify-between">
                   <div>
                     <div className="flex gap-2 mb-2 items-center">
@@ -249,7 +169,6 @@ export default function Collections({
                     </p>
                   </div>
 
-                  {/* Actions layout column */}
                   <div className="pt-4 border-t border-neutral-800/80 grid grid-cols-2 gap-2 mt-auto">
                     <button
                       onClick={() => setSelectedProduct(p)}
@@ -258,10 +177,10 @@ export default function Collections({
                       View Details
                     </button>
                     <button
-                      onClick={() => onOpenInquiryModal(p)}
+                        onClick={() => onAddToCart(p)}
                       className="text-[11px] font-sans font-bold uppercase tracking-wider bg-gold-500 text-black hover:bg-gold-400 py-2 rounded text-center transition-colors"
                     >
-                      Inquire Store
+                        Add to Cart
                     </button>
                   </div>
                 </div>
@@ -273,13 +192,10 @@ export default function Collections({
             <HelpCircle className="w-10 h-10 text-gold-400 mx-auto mb-4" />
             <h4 className="font-serif text-lg text-white mb-2 font-bold uppercase tracking-wider">No Items Found</h4>
             <p className="text-xs text-neutral-400 font-sans leading-relaxed">
-              We couldn't find any designs matching "{localSearch}" in this category. Let us customize a design for you!
+              We couldn't find any designs matching "{localSearch}". Let us customize a design for you!
             </p>
             <button
-              onClick={() => {
-                setLocalSearch('');
-                setSelectedCategory('all');
-              }}
+              onClick={() => setLocalSearch('')}
               className="mt-6 text-xs text-black bg-gold-500 px-4 py-2 rounded font-sans font-bold uppercase tracking-widest"
             >
               Reset Filters
@@ -339,7 +255,22 @@ export default function Collections({
                         Approx: {selectedProduct.weight}
                       </span>
                     )}
+                    {selectedProduct.isBestseller && (
+                      <span className="bg-gold-300 text-black text-[10px] px-2 py-1 rounded font-bold uppercase">
+                        Bestseller
+                      </span>
+                    )}
                   </div>
+                  {(selectedProduct.price !== undefined || selectedProduct.originalPrice !== undefined) && (
+                    <div className="flex flex-wrap items-center gap-3 mb-4">
+                      {selectedProduct.price !== undefined && (
+                        <span className="text-lg font-semibold text-white">₹{selectedProduct.price.toLocaleString('en-IN')}</span>
+                      )}
+                      {selectedProduct.originalPrice !== undefined && (
+                        <span className="text-sm text-neutral-400 line-through">₹{selectedProduct.originalPrice.toLocaleString('en-IN')}</span>
+                      )}
+                    </div>
+                  )}
 
                   <hr className="border-neutral-900 my-4" />
 

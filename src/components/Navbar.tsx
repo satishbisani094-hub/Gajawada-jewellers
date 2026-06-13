@@ -1,23 +1,29 @@
 import { useState, useEffect } from 'react';
-import { Menu, X, Heart, Search, Phone, ChevronDown, Award, TrendingUp, TrendingDown, Clock, MapPin } from 'lucide-react';
+import { Menu, X, Heart, Search, Phone, ChevronDown, Award, TrendingUp, TrendingDown, Clock, MapPin, ShoppingCart } from 'lucide-react';
 import { liveRates } from '../data/jewelryData';
 import { Product, LiveRate } from '../types';
 import { fetchLiveRates } from '../utils/goldRateService';
 
 interface NavbarProps {
   shortlist: Product[];
+  cart: Product[];
   onRemoveFromShortlist: (product: Product) => void;
   onOpenShortlist: () => void;
   onOpenInquiryModal: (product?: Product) => void;
+  onOpenAdmin: () => void;
+  onOpenCart: () => void;
   onSearchChange: (query: string) => void;
   searchQuery: string;
 }
 
 export default function Navbar({
   shortlist,
+  cart,
   onRemoveFromShortlist,
   onOpenShortlist,
+  onOpenCart,
   onOpenInquiryModal,
+  onOpenAdmin,
   onSearchChange,
   searchQuery,
 }: NavbarProps) {
@@ -178,6 +184,20 @@ export default function Navbar({
               )}
             </button>
 
+            <button
+              onClick={onOpenCart}
+              className="relative text-neutral-400 hover:text-gold-300 transition-colors p-1 flex items-center"
+              aria-label="Open Cart"
+              id="navbar-cart-btn"
+            >
+              <ShoppingCart className="w-5 h-5" />
+              {cart.length > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-gold-400 text-black font-sans text-[9px] font-bold rounded-full flex items-center justify-center animate-bounce">
+                  {cart.length}
+                </span>
+              )}
+            </button>
+
             {/* Store Call CTA */}
             <a
               href="tel:+919848521360"
@@ -193,6 +213,15 @@ export default function Navbar({
               id="navbar-book-btn"
             >
               Inquire Now
+            </button>
+
+            {/* Admin Panel btn */}
+            <button
+              onClick={onOpenAdmin}
+              className="hidden xl:inline-flex items-center gap-2 text-xs font-sans font-bold bg-neutral-900/90 hover:bg-neutral-800 text-white px-4 py-2 rounded border border-gold-500/30 transition-all duration-300 tracking-wider uppercase"
+              id="navbar-admin-btn"
+            >
+              Admin
             </button>
 
             {/* Mobile Menu Toggle Button */}
