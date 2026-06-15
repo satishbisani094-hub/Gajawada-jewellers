@@ -117,7 +117,7 @@ export default function AdminLogin({
   // 3. Handle Owner Login
   const handleOwnerSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (username.trim() === 'owner' && password === 'admin@123') {
+    if (username.trim() === 'owner' && password === 'Gajawada@Secure2026') {
       setOwnerSuccess(true);
       setOwnerError('');
       onLoginSuccess({ type: 'owner', name: 'Store Owner' });
@@ -489,7 +489,7 @@ export default function AdminLogin({
                     <span className="flex items-center gap-1">
                       <HelpCircle className="w-3 h-3 text-[#ea580c]" /> Username: owner
                     </span>
-                    <span>Password: admin@123</span>
+                    <span>Password: Gajawada@Secure2026</span>
                   </div>
                 </form>
               )}
