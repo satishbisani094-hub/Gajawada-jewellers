@@ -14,6 +14,8 @@ interface NavbarProps {
   onOpenCart: () => void;
   onSearchChange: (query: string) => void;
   searchQuery: string;
+  currentUser: { type: 'customer' | 'owner'; name: string } | null;
+  onLogout: () => void;
 }
 
 export default function Navbar({
@@ -26,6 +28,8 @@ export default function Navbar({
   onOpenAdmin,
   onSearchChange,
   searchQuery,
+  currentUser,
+  onLogout,
 }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -170,34 +174,72 @@ export default function Navbar({
             </div>
 
             {/* Custom Login Portal Button Dropdown Wrapper */}
-            <div className="relative group">
-              <button
-                onClick={() => onOpenAdmin('customer')}
-                className="inline-flex items-center gap-1.5 rounded-full border border-[#046a38]/20 bg-[#e6f4ea] px-4 py-1.5 text-xs font-sans font-bold text-[#065f46] hover:bg-[#d4edd9] active:scale-[0.98] transition-all select-none"
-                id="navbar-login-btn"
-              >
-                <User className="w-4 h-4 fill-none" />
-                <span>Login</span>
-              </button>
+            {currentUser ? (
+              <div className="relative group">
+                <button
+                  type="button"
+                  onClick={() => onOpenAdmin(currentUser.type)}
+                  className={`inline-flex items-center gap-1.5 rounded-full border px-4 py-1.5 text-xs font-sans font-bold transition-all select-none ${
+                    currentUser.type === 'owner'
+                      ? 'border-[#ea580c]/20 bg-[#fdf2e9] text-[#ea580c] hover:bg-[#fbe5d6]'
+                      : 'border-[#046a38]/20 bg-[#e6f4ea] text-[#065f46] hover:bg-[#d4edd9]'
+                  }`}
+                  id="navbar-logged-in-btn"
+                >
+                  {currentUser.type === 'owner' ? (
+                    <Lock className="w-4 h-4 fill-none" />
+                  ) : (
+                    <User className="w-4 h-4 fill-none" />
+                  )}
+                  <span>{currentUser.name}</span>
+                </button>
 
-              {/* Dropdown Options */}
-              <div className="absolute top-[130%] right-0 w-44 bg-white border border-neutral-200/80 rounded-2xl shadow-xl p-1.5 hidden group-hover:block z-[60] overflow-hidden text-neutral-800 animate-fadeIn">
+                {/* Dropdown Logout */}
+                <div className="absolute top-[130%] right-0 w-40 bg-white border border-neutral-200/80 rounded-2xl shadow-xl p-1.5 hidden group-hover:block z-[60] overflow-hidden text-neutral-800 animate-fadeIn">
+                  <button
+                    onClick={() => onOpenAdmin(currentUser.type)}
+                    className="w-full text-left px-3.5 py-2 rounded-xl text-[11px] font-bold font-sans flex items-center gap-2 hover:bg-neutral-100 text-neutral-700 transition-colors"
+                  >
+                    <span>View Portal</span>
+                  </button>
+                  <button
+                    onClick={onLogout}
+                    className="w-full text-left px-3.5 py-2 rounded-xl text-[11px] font-bold font-sans flex items-center gap-2 hover:bg-red-50 text-red-600 transition-colors border-t border-neutral-100/50"
+                  >
+                    <span>Sign Out</span>
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="relative group">
                 <button
                   onClick={() => onOpenAdmin('customer')}
-                  className="w-full text-left px-3 py-2 rounded-xl text-[11px] font-bold font-sans flex items-center gap-2 hover:bg-[#e6f4ea] text-[#065f46] transition-colors"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-[#046a38]/20 bg-[#e6f4ea] px-4 py-1.5 text-xs font-sans font-bold text-[#065f46] hover:bg-[#d4edd9] active:scale-[0.98] transition-all select-none"
+                  id="navbar-login-btn"
                 >
-                  <User className="w-3.5 h-3.5 text-[#065f46]" />
-                  <span>Customer Portal</span>
+                  <User className="w-4 h-4 fill-none" />
+                  <span>Login</span>
                 </button>
-                <button
-                  onClick={() => onOpenAdmin('owner')}
-                  className="w-full text-left px-3 py-2 rounded-xl text-[11px] font-bold font-sans flex items-center gap-2 hover:bg-[#fdf2e9] text-[#ea580c] transition-colors border-t border-neutral-100/50"
-                >
-                  <Lock className="w-3.5 h-3.5 text-[#ea580c]" />
-                  <span>Store Owner</span>
-                </button>
+
+                {/* Dropdown Options */}
+                <div className="absolute top-[130%] right-0 w-44 bg-white border border-neutral-200/80 rounded-2xl shadow-xl p-1.5 hidden group-hover:block z-[60] overflow-hidden text-neutral-800 animate-fadeIn">
+                  <button
+                    onClick={() => onOpenAdmin('customer')}
+                    className="w-full text-left px-3 py-2 rounded-xl text-[11px] font-bold font-sans flex items-center gap-2 hover:bg-[#e6f4ea] text-[#065f46] transition-colors"
+                  >
+                    <User className="w-3.5 h-3.5 text-[#065f46]" />
+                    <span>Customer Portal</span>
+                  </button>
+                  <button
+                    onClick={() => onOpenAdmin('owner')}
+                    className="w-full text-left px-3 py-2 rounded-xl text-[11px] font-bold font-sans flex items-center gap-2 hover:bg-[#fdf2e9] text-[#ea580c] transition-colors border-t border-neutral-100/50"
+                  >
+                    <Lock className="w-3.5 h-3.5 text-[#ea580c]" />
+                    <span>Store Owner</span>
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Shortlist Bag Heart */}
             <button

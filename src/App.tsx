@@ -36,6 +36,11 @@ export default function App() {
   const [cart, setCart] = useState<Product[]>([]);
   const [isLoginOpen, setIsLoginOpen] = useState<boolean>(false);
   const [loginTab, setLoginTab] = useState<'customer' | 'owner'>('customer');
+  const [currentUser, setCurrentUser] = useState<{ type: 'customer' | 'owner'; name: string } | null>(null);
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+  };
 
   // 1. LocalStorage synchronization for shortlisted products
   useEffect(() => {
@@ -157,6 +162,8 @@ export default function App() {
         }}
         onSearchChange={setSearchQuery}
         searchQuery={searchQuery}
+        currentUser={currentUser}
+        onLogout={handleLogout}
       />
 
       {/* 2. MAIN APP CONTENT FLOW */}
@@ -182,6 +189,7 @@ export default function App() {
           <AdminLogin
             initialTab={loginTab}
             onClose={() => setIsLoginOpen(false)}
+            onLoginSuccess={setCurrentUser}
           />
         )}
 

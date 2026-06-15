@@ -4,9 +4,10 @@ import { X, CheckCircle, ShieldAlert, Users, TrendingUp, HelpCircle } from 'luci
 interface AdminLoginProps {
   onClose: () => void;
   initialTab?: 'customer' | 'owner';
+  onLoginSuccess: (user: { type: 'customer' | 'owner'; name: string }) => void;
 }
 
-export default function AdminLogin({ onClose, initialTab = 'customer' }: AdminLoginProps) {
+export default function AdminLogin({ onClose, initialTab = 'customer', onLoginSuccess }: AdminLoginProps) {
   const [activeTab, setActiveTab] = useState<'customer' | 'owner'>(initialTab);
 
   // Customer Form State
@@ -46,6 +47,7 @@ export default function AdminLogin({ onClose, initialTab = 'customer' }: AdminLo
     if (otpCode === generatedOtp || otpCode === '1234') {
       setCustomerSuccess(true);
       setShowToast(false);
+      onLoginSuccess({ type: 'customer', name: fullName || 'Customer' });
       setTimeout(() => {
         onClose();
       }, 2500);
@@ -60,6 +62,7 @@ export default function AdminLogin({ onClose, initialTab = 'customer' }: AdminLo
     if (username.trim() === 'owner' && password === 'admin@123') {
       setOwnerSuccess(true);
       setOwnerError('');
+      onLoginSuccess({ type: 'owner', name: 'Store Owner' });
     } else {
       setOwnerError('Invalid secure access credentials.');
     }
