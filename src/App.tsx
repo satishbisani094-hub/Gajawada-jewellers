@@ -53,15 +53,38 @@ export default function App() {
     }
   }, []);
 
+  const DB_URL = 'https://api.restful-api.dev/objects/ff8081819d82fab6019eca12b0160b03';
+
   useEffect(() => {
-    try {
-      const storedProducts = localStorage.getItem('gajawada_products');
-      if (storedProducts) {
-        setProducts(JSON.parse(storedProducts));
+    const loadProducts = async () => {
+      let localData: Product[] = [];
+      try {
+        const stored = localStorage.getItem('gajawada_products');
+        if (stored) {
+          localData = JSON.parse(stored);
+        }
+      } catch (e) {
+        console.warn('Could not load from localStorage:', e);
       }
-    } catch (e) {
-      console.warn('Could not load product collection from localStorage:', e);
-    }
+
+      try {
+        const response = await fetch(DB_URL);
+        if (response.ok) {
+          const result = await response.json();
+          if (result && result.data && Array.isArray(result.data.products)) {
+            setProducts(result.data.products);
+            localStorage.setItem('gajawada_products', JSON.stringify(result.data.products));
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn('Could not load products from remote database, using local cache:', e);
+      }
+
+      setProducts(localData);
+    };
+
+    loadProducts();
   }, []);
 
   useEffect(() => {
@@ -75,12 +98,29 @@ export default function App() {
     }
   }, []);
 
-  const saveProducts = (updatedProducts: Product[]) => {
+  const saveProducts = async (updatedProducts: Product[]) => {
     setProducts(updatedProducts);
     try {
       localStorage.setItem('gajawada_products', JSON.stringify(updatedProducts));
     } catch (e) {
       console.warn('Could not save product collection to localStorage:', e);
+    }
+
+    try {
+      await fetch(DB_URL, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: 'gajawada-products',
+          data: {
+            products: updatedProducts,
+          },
+        }),
+      });
+    } catch (e) {
+      console.error('Could not save product collection to remote database:', e);
     }
   };
 
