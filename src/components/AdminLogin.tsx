@@ -284,7 +284,15 @@ export default function AdminLogin({
           {activeTab === 'owner' && (
             <div>
               {ownerSuccess ? (
-                <div className="space-y-5 animate-fadeIn text-neutral-800">
+                <div className="space-y-5 animate-fadeIn text-neutral-800 relative">
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    className="absolute -top-4 -right-4 text-neutral-400 hover:text-neutral-600 transition-colors p-1"
+                    aria-label="Close portal"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
                   <div className="text-center border-b border-neutral-100 pb-3">
                     <div className="flex items-center justify-center text-[#ea580c] mb-2">
                       <CheckCircle className="w-10 h-10 stroke-[1.5]" />
