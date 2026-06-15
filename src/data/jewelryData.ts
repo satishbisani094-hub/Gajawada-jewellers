@@ -94,6 +94,14 @@ export const collectionCategories: CollectionCategory[] = [
     imageUrl: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=600&auto=format&fit=crop',
     count: 8,
   },
+  {
+    id: 'silver-jewelry',
+    name: 'Silver Jewelry',
+    slug: 'silver-jewelry',
+    description: 'Elegant sterling silver articles, anklets, rings, and custom silverware.',
+    imageUrl: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=600&auto=format&fit=crop',
+    count: 14,
+  },
 ];
 
 /**

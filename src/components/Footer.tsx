@@ -8,6 +8,7 @@ export default function Footer() {
     { name: 'Diamond Jewelry', hash: '#collections' },
     { name: 'Rings & Solitaires', hash: '#collections' },
     { name: 'Temple Relic Pieces', hash: '#collections' },
+    { name: 'Silver Jewelry', hash: '#collections' },
   ];
 
   const servicesList = [
