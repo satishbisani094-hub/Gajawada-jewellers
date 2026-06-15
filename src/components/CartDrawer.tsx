@@ -19,7 +19,6 @@ export default function CartDrawer({
 }: CartDrawerProps) {
   const [customerName, setCustomerName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [emailAddress, setEmailAddress] = useState('');
   const [deliveryAddress, setDeliveryAddress] = useState('');
   const [isOrdered, setIsOrdered] = useState(false);
 
@@ -53,9 +52,6 @@ export default function CartDrawer({
     messageText += `*Customer Info:*\n`;
     messageText += `- Name: ${customerName}\n`;
     messageText += `- Phone: ${phoneNumber}\n`;
-    if (emailAddress) {
-      messageText += `- Email: ${emailAddress}\n`;
-    }
     messageText += `- Address: ${deliveryAddress}\n\n`;
     
     messageText += `*Products:* \n`;
@@ -80,7 +76,6 @@ export default function CartDrawer({
     // Reset form fields
     setCustomerName('');
     setPhoneNumber('');
-    setEmailAddress('');
     setDeliveryAddress('');
   };
 
@@ -183,32 +178,18 @@ export default function CartDrawer({
                       />
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-[10px] font-sans font-bold text-neutral-350 uppercase tracking-widest mb-1.5">
-                          WhatsApp Mobile *
-                        </label>
-                        <input
-                          type="tel"
-                          required
-                          value={phoneNumber}
-                          onChange={(e) => setPhoneNumber(e.target.value)}
-                          placeholder="e.g. +91 99999 99999"
-                          className="w-full bg-neutral-950 border border-neutral-800 focus:border-gold-500 rounded px-3 py-2.5 text-xs text-neutral-200 placeholder-neutral-600 outline-none font-sans"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-[10px] font-sans font-bold text-neutral-350 uppercase tracking-widest mb-1.5">
-                          Email Address
-                        </label>
-                        <input
-                          type="email"
-                          value={emailAddress}
-                          onChange={(e) => setEmailAddress(e.target.value)}
-                          placeholder="anand@example.com"
-                          className="w-full bg-neutral-950 border border-neutral-800 focus:border-gold-500 rounded px-3 py-2.5 text-xs text-neutral-200 placeholder-neutral-600 outline-none font-sans"
-                        />
-                      </div>
+                     <div>
+                      <label className="block text-[10px] font-sans font-bold text-neutral-350 uppercase tracking-widest mb-1.5">
+                        WhatsApp Mobile *
+                      </label>
+                      <input
+                        type="tel"
+                        required
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        placeholder="e.g. +91 99999 99999"
+                        className="w-full bg-neutral-950 border border-neutral-800 focus:border-gold-500 rounded px-3 py-2.5 text-xs text-neutral-200 placeholder-neutral-600 outline-none font-sans"
+                      />
                     </div>
 
                     <div>
