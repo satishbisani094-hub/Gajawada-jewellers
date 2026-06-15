@@ -1,13 +1,26 @@
 import { useState } from 'react';
-import { X, CheckCircle, ShieldAlert, Users, TrendingUp, HelpCircle } from 'lucide-react';
+import { X, CheckCircle, ShieldAlert, Users, TrendingUp, HelpCircle, PlusCircle, Trash2 } from 'lucide-react';
+import { Product, CollectionCategory } from '../types';
 
 interface AdminLoginProps {
   onClose: () => void;
   initialTab?: 'customer' | 'owner';
   onLoginSuccess: (user: { type: 'customer' | 'owner'; name: string }) => void;
+  products?: Product[];
+  categories?: CollectionCategory[];
+  onAddProduct?: (product: Product) => void;
+  onDeleteProduct?: (productId: string) => void;
 }
 
-export default function AdminLogin({ onClose, initialTab = 'customer', onLoginSuccess }: AdminLoginProps) {
+export default function AdminLogin({
+  onClose,
+  initialTab = 'customer',
+  onLoginSuccess,
+  products = [],
+  categories = [],
+  onAddProduct,
+  onDeleteProduct,
+}: AdminLoginProps) {
   const [activeTab, setActiveTab] = useState<'customer' | 'owner'>(initialTab);
 
   // Customer Form State
@@ -25,6 +38,47 @@ export default function AdminLogin({ onClose, initialTab = 'customer', onLoginSu
   const [password, setPassword] = useState('');
   const [ownerSuccess, setOwnerSuccess] = useState(false);
   const [ownerError, setOwnerError] = useState('');
+
+  // Form state for adding products
+  const [name, setName] = useState('');
+  const [category, setCategory] = useState('gold-necklaces');
+  const [imageUrl, setImageUrl] = useState('');
+  const [price, setPrice] = useState('');
+  const [originalPrice, setOriginalPrice] = useState('');
+
+  const handleAddSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name || !category) return;
+
+    const createId = (val: string) => val.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + Date.now();
+
+    const newProduct: Product = {
+      id: createId(name),
+      name,
+      category,
+      description: 'Handcrafted premium BIS Hallmarked jewellery piece.',
+      imageUrl: imageUrl || 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=600&auto=format&fit=crop',
+      purity: '22K Gold',
+      weight: 'Custom weight',
+      price: price ? Number(price) : undefined,
+      originalPrice: originalPrice ? Number(originalPrice) : undefined,
+      rating: 4.8,
+      reviewCount: 42,
+      tags: [],
+      isFeatured: true,
+      isBestseller: false
+    };
+
+    if (onAddProduct) {
+      onAddProduct(newProduct);
+    }
+
+    // Reset Form
+    setName('');
+    setImageUrl('');
+    setPrice('');
+    setOriginalPrice('');
+  };
 
   // 1. Handle Customer OTP Request
   const handleRequestOTP = (e: React.FormEvent) => {
@@ -230,58 +284,115 @@ export default function AdminLogin({ onClose, initialTab = 'customer', onLoginSu
           {activeTab === 'owner' && (
             <div>
               {ownerSuccess ? (
-                <div className="space-y-6 animate-fadeIn text-neutral-800">
-                  <div className="text-center border-b border-neutral-100 pb-4">
-                    <div className="flex items-center justify-center text-[#ea580c] mb-3">
-                      <CheckCircle className="w-12 h-12 stroke-[1.5]" />
+                <div className="space-y-5 animate-fadeIn text-neutral-800">
+                  <div className="text-center border-b border-neutral-100 pb-3">
+                    <div className="flex items-center justify-center text-[#ea580c] mb-2">
+                      <CheckCircle className="w-10 h-10 stroke-[1.5]" />
                     </div>
-                    <h3 className="text-lg font-bold text-neutral-900">Secure Portal Active</h3>
-                    <p className="text-xs text-neutral-500">Welcome back, Gajawada Admin Store Representative.</p>
+                    <h3 className="text-lg font-bold text-neutral-900">Store Owner Admin Panel</h3>
+                    <p className="text-xs text-neutral-500 mt-0.5">Manage products in the live catalog.</p>
                   </div>
 
-                  {/* MINI MOCK DASHBOARD STATS */}
-                  <div className="grid grid-cols-2 gap-3.5">
-                    <div className="bg-neutral-50 p-3.5 rounded-2xl border border-neutral-200/50">
-                      <div className="flex items-center gap-2 text-neutral-500 mb-1">
-                        <Users className="w-4 h-4 text-[#ea580c]" />
-                        <span className="text-[10px] uppercase font-bold tracking-wider">Today's Visits</span>
-                      </div>
-                      <p className="text-xl font-bold text-neutral-900">45 Users</p>
-                    </div>
-
-                    <div className="bg-neutral-50 p-3.5 rounded-2xl border border-neutral-200/50">
-                      <div className="flex items-center gap-2 text-neutral-500 mb-1">
-                        <TrendingUp className="w-4 h-4 text-emerald-600" />
-                        <span className="text-[10px] uppercase font-bold tracking-wider">Gold (22K)</span>
-                      </div>
-                      <p className="text-xl font-bold text-neutral-900">₹11,900/g</p>
-                    </div>
-                  </div>
-
-                  {/* MOCK CLIENT INQUIRIES VIEW */}
-                  <div className="space-y-3.5">
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-500">Active WhatsApp Leads</h4>
-                      <span className="bg-[#ea580c]/10 text-[#ea580c] px-2 py-0.5 rounded text-[10px] font-bold">18 Pending</span>
-                    </div>
+                  <div className="max-h-[420px] overflow-y-auto pr-1 space-y-5">
                     
-                    <div className="space-y-2 max-h-[140px] overflow-y-auto pr-1">
-                      <div className="bg-neutral-50 p-3 rounded-xl border border-neutral-100 flex justify-between items-center text-xs">
-                        <div>
-                          <p className="font-semibold text-neutral-900">Kundan Bridal Choker</p>
-                          <p className="text-[10px] text-neutral-500">Inquiry by Ramesh K. • 12 mins ago</p>
-                        </div>
-                        <span className="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">Live</span>
+                    {/* Add Product Form */}
+                    <form onSubmit={handleAddSubmit} className="space-y-3.5 border border-neutral-200/60 p-4 rounded-2xl bg-neutral-50">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-[#ea580c] text-left">Add New Product</h4>
+                      
+                      <label className="block space-y-1 text-xs font-semibold text-neutral-700 text-left">
+                        Product Name
+                        <input
+                          type="text"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-xs text-neutral-800 outline-none focus:border-[#ea580c] focus:ring-1 focus:ring-[#ea580c]"
+                          placeholder="e.g. Kundan Necklace"
+                          required
+                        />
+                      </label>
+
+                      <label className="block space-y-1 text-xs font-semibold text-neutral-700 text-left">
+                        Category
+                        <select
+                          value={category}
+                          onChange={(e) => setCategory(e.target.value)}
+                          className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-xs text-neutral-800 outline-none focus:border-[#ea580c] focus:ring-1 focus:ring-[#ea580c]"
+                        >
+                          {categories.map((cat) => (
+                            <option key={cat.id} value={cat.id}>{cat.name}</option>
+                          ))}
+                        </select>
+                      </label>
+
+                      <label className="block space-y-1 text-xs font-semibold text-neutral-700 text-left">
+                        Image URL
+                        <input
+                          type="text"
+                          value={imageUrl}
+                          onChange={(e) => setImageUrl(e.target.value)}
+                          className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-xs text-neutral-800 outline-none focus:border-[#ea580c] focus:ring-1 focus:ring-[#ea580c]"
+                          placeholder="https://..."
+                        />
+                      </label>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        <label className="block space-y-1 text-xs font-semibold text-neutral-700 text-left">
+                          Price (₹)
+                          <input
+                            type="number"
+                            value={price}
+                            onChange={(e) => setPrice(e.target.value)}
+                            className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-xs text-neutral-800 outline-none focus:border-[#ea580c] focus:ring-1 focus:ring-[#ea580c]"
+                            placeholder="e.g. 15000"
+                          />
+                        </label>
+                        <label className="block space-y-1 text-xs font-semibold text-neutral-700 text-left">
+                          Original Price (₹)
+                          <input
+                            type="number"
+                            value={originalPrice}
+                            onChange={(e) => setOriginalPrice(e.target.value)}
+                            className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-xs text-neutral-800 outline-none focus:border-[#ea580c] focus:ring-1 focus:ring-[#ea580c]"
+                            placeholder="e.g. 18000"
+                          />
+                        </label>
                       </div>
 
-                      <div className="bg-neutral-50 p-3 rounded-xl border border-neutral-100 flex justify-between items-center text-xs">
-                        <div>
-                          <p className="font-semibold text-neutral-900">Diamond Solitaire Ring</p>
-                          <p className="text-[10px] text-neutral-500">Inquiry by Priya S. • 45 mins ago</p>
-                        </div>
-                        <span className="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">Live</span>
+                      <button
+                        type="submit"
+                        className="w-full rounded-lg bg-[#ea580c] py-2 text-xs font-bold text-white transition hover:bg-[#d94e06] active:scale-[0.99]"
+                      >
+                        Add Product to Collection
+                      </button>
+                    </form>
+
+                    {/* Inventory List */}
+                    <div className="space-y-2 text-left">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-500">Live Inventory ({products.length})</h4>
+                      <div className="divide-y divide-neutral-100 border border-neutral-200/60 rounded-2xl bg-neutral-50 p-2 space-y-1.5">
+                        {products.length > 0 ? (
+                          products.map((p) => (
+                            <div key={p.id} className="flex justify-between items-center text-xs py-1.5 px-2">
+                              <div>
+                                <p className="font-semibold text-neutral-900">{p.name}</p>
+                                <p className="text-[10px] text-neutral-500">{p.category} {p.price && `• ₹${p.price.toLocaleString('en-IN')}`}</p>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => onDeleteProduct?.(p.id)}
+                                className="text-red-500 hover:text-red-700 p-1 transition"
+                                title="Delete product"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-[10px] text-neutral-400 p-4 text-center">No products in inventory.</p>
+                        )}
                       </div>
                     </div>
+
                   </div>
 
                   <button
@@ -289,7 +400,7 @@ export default function AdminLogin({ onClose, initialTab = 'customer', onLoginSu
                       setOwnerSuccess(false);
                       setPassword('');
                     }}
-                    className="w-full rounded-xl bg-neutral-900 py-3 text-xs font-bold text-white transition hover:bg-neutral-800"
+                    className="w-full rounded-xl bg-neutral-900 py-3 text-xs font-bold text-white transition hover:bg-neutral-800 mt-2"
                   >
                     Logout Portal Session
                   </button>

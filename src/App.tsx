@@ -188,6 +188,10 @@ export default function App() {
         {isLoginOpen && (
           <AdminLogin
             initialTab={loginTab}
+            products={products}
+            categories={collectionCategories}
+            onAddProduct={handleAddProduct}
+            onDeleteProduct={handleDeleteProduct}
             onClose={() => setIsLoginOpen(false)}
             onLoginSuccess={setCurrentUser}
           />
