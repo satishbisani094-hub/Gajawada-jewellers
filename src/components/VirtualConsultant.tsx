@@ -58,7 +58,7 @@ export default function VirtualConsultant({ products, onOpenInquiryModal }: Virt
 
     // fallback in case no categories match index limits
     if (matches.length === 0) {
-      matches = allProducts.slice(0, 2);
+      matches = products.slice(0, 2);
     } else {
       matches = matches.slice(0, 3); // Take top 3 recommendations
     }

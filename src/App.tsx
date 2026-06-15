@@ -5,7 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { Product } from './types';
-import { collectionCategories } from './data/jewelryData';
+import { collectionCategories, allProducts } from './data/jewelryData';
 
 // Importing premium modular components
 import Navbar from './components/Navbar';
@@ -53,7 +53,7 @@ export default function App() {
     }
   }, []);
 
-  const DB_URL = 'https://api.restful-api.dev/objects/ff8081819d82fab6019eca12b0160b03';
+  const DB_URL = 'https://api.npoint.io/004b810bbd7930273175';
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -71,20 +71,49 @@ export default function App() {
         const response = await fetch(DB_URL);
         if (response.ok) {
           const result = await response.json();
-          if (result && result.data && Array.isArray(result.data.products)) {
-            setProducts(result.data.products);
-            localStorage.setItem('gajawada_products', JSON.stringify(result.data.products));
-            return;
+          if (result && Array.isArray(result.products)) {
+            const remoteProducts = result.products;
+            if (remoteProducts.length > 0) {
+              setProducts(remoteProducts);
+              localStorage.setItem('gajawada_products', JSON.stringify(remoteProducts));
+              return;
+            } else {
+              // Remote database is empty, auto-initialize it with the 17 default products
+              console.log('Remote database is empty. Initializing with default products...');
+              setProducts(allProducts);
+              localStorage.setItem('gajawada_products', JSON.stringify(allProducts));
+              saveProducts(allProducts);
+              return;
+            }
           }
         }
       } catch (e) {
         console.warn('Could not load products from remote database, using local cache:', e);
       }
 
-      setProducts(localData);
+      // Fallback: if remote fetch failed or returned invalid data, use local cache or default catalog
+      const finalProducts = localData.length > 0 ? localData : allProducts;
+      setProducts(finalProducts);
+      if (localData.length === 0) {
+        localStorage.setItem('gajawada_products', JSON.stringify(allProducts));
+      }
     };
 
     loadProducts();
+
+    // Refresh data every 15 seconds to sync additions/deletions in real-time
+    const intervalId = setInterval(loadProducts, 15000);
+
+    // Refresh data when the tab is focused (e.g. customer switches back to the tab)
+    const handleFocus = () => {
+      loadProducts();
+    };
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      clearInterval(intervalId);
+      window.removeEventListener('focus', handleFocus);
+    };
   }, []);
 
   useEffect(() => {
@@ -108,15 +137,12 @@ export default function App() {
 
     try {
       await fetch(DB_URL, {
-        method: 'PUT',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: 'gajawada-products',
-          data: {
-            products: updatedProducts,
-          },
+          products: updatedProducts,
         }),
       });
     } catch (e) {
