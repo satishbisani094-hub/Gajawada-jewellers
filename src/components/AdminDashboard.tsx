@@ -18,7 +18,6 @@ export default function AdminDashboard({ categories, products, onSaveProducts, o
   const [originalPrice, setOriginalPrice] = useState('');
   const [rating, setRating] = useState('4.7');
   const [reviewCount, setReviewCount] = useState('120');
-  const [tagsText, setTagsText] = useState('');
   const [isFeatured, setIsFeatured] = useState(false);
   const [isBestseller, setIsBestseller] = useState(false);
 
@@ -32,7 +31,6 @@ export default function AdminDashboard({ categories, products, onSaveProducts, o
     setOriginalPrice('');
     setRating('4.7');
     setReviewCount('120');
-    setTagsText('');
     setIsFeatured(false);
     setIsBestseller(false);
   };
@@ -55,7 +53,7 @@ export default function AdminDashboard({ categories, products, onSaveProducts, o
       originalPrice: originalPrice ? Number(originalPrice) : undefined,
       rating: rating ? Number(rating) : undefined,
       reviewCount: reviewCount ? Number(reviewCount) : undefined,
-      tags: tagsText.split(',').map((tag) => tag.trim()).filter(Boolean),
+      tags: [],
       isFeatured,
       isBestseller,
     };
@@ -166,37 +164,27 @@ export default function AdminDashboard({ categories, products, onSaveProducts, o
                 </label>
               </div>
 
-              <div className="grid gap-4 sm:grid-cols-2">
-                <label className="space-y-2 text-sm text-neutral-300">
-                  Tags
-                  <input
-                    value={tagsText}
-                    onChange={(e) => setTagsText(e.target.value)}
-                    className="w-full rounded-xl border border-neutral-800 bg-neutral-950 px-4 py-3 text-sm text-white outline-none focus:border-gold-500"
-                    placeholder="e.g. Bridal, Kundan, Gold"
-                  />
-                </label>
-                <label className="inline-flex flex-col justify-between gap-2 text-sm text-neutral-300">
-                  <span>Bestseller</span>
-                  <input
-                    type="checkbox"
-                    checked={isBestseller}
-                    onChange={(e) => setIsBestseller(e.target.checked)}
-                    className="h-4 w-4 rounded border-neutral-700 bg-neutral-900 text-gold-500 focus:ring-gold-500"
-                  />
-                </label>
-              </div>
-
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <label className="inline-flex items-center gap-2 text-sm text-neutral-300">
-                  <input
-                    type="checkbox"
-                    checked={isFeatured}
-                    onChange={(e) => setIsFeatured(e.target.checked)}
-                    className="h-4 w-4 rounded border-neutral-700 bg-neutral-900 text-gold-500 focus:ring-gold-500"
-                  />
-                  Feature this product
-                </label>
+              <div className="flex flex-wrap items-center justify-between gap-4 mt-6">
+                <div className="flex flex-wrap items-center gap-6">
+                  <label className="inline-flex items-center gap-2 text-sm text-neutral-300 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={isBestseller}
+                      onChange={(e) => setIsBestseller(e.target.checked)}
+                      className="h-4 w-4 rounded border-neutral-700 bg-neutral-900 text-gold-500 focus:ring-gold-500"
+                    />
+                    Bestseller
+                  </label>
+                  <label className="inline-flex items-center gap-2 text-sm text-neutral-300 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={isFeatured}
+                      onChange={(e) => setIsFeatured(e.target.checked)}
+                      className="h-4 w-4 rounded border-neutral-700 bg-neutral-900 text-gold-500 focus:ring-gold-500"
+                    />
+                    Feature this product
+                  </label>
+                </div>
                 <button
                   type="submit"
                   className="inline-flex items-center gap-2 rounded-full bg-gold-500 px-5 py-3 text-sm font-semibold uppercase tracking-[0.15em] text-black transition hover:bg-gold-400"
