@@ -293,6 +293,7 @@ export default function App() {
         cart={cart}
         onClose={() => setIsCartDrawerOpen(false)}
         onRemoveFromCart={handleRemoveFromCart}
+        onClearCart={() => saveCart([])}
       />
 
       {/* Product-specific Inquiry Modal dialog */}
