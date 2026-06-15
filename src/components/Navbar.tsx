@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Menu, X, Heart, Search, Phone, ChevronDown, Award, TrendingUp, TrendingDown, Clock, MapPin, ShoppingCart, User } from 'lucide-react';
+import { Menu, X, Heart, Search, Phone, ChevronDown, Award, TrendingUp, TrendingDown, Clock, MapPin, ShoppingCart, User, Lock } from 'lucide-react';
 import { liveRates } from '../data/jewelryData';
 import { Product, LiveRate } from '../types';
 import { fetchLiveRates } from '../utils/goldRateService';
@@ -10,7 +10,7 @@ interface NavbarProps {
   onRemoveFromShortlist: (product: Product) => void;
   onOpenShortlist: () => void;
   onOpenInquiryModal: (product?: Product) => void;
-  onOpenAdmin: () => void;
+  onOpenAdmin: (tab: 'customer' | 'owner') => void;
   onOpenCart: () => void;
   onSearchChange: (query: string) => void;
   searchQuery: string;
@@ -169,15 +169,35 @@ export default function Navbar({
               </button>
             </div>
 
-            {/* Custom Login Portal Button */}
-            <button
-              onClick={onOpenAdmin}
-              className="inline-flex items-center gap-1.5 rounded-full border border-[#046a38]/20 bg-[#e6f4ea] px-4 py-1.5 text-xs font-sans font-bold text-[#065f46] hover:bg-[#d4edd9] active:scale-[0.98] transition-all select-none"
-              id="navbar-login-btn"
-            >
-              <User className="w-4 h-4 fill-none" />
-              <span>Login</span>
-            </button>
+            {/* Custom Login Portal Button Dropdown Wrapper */}
+            <div className="relative group">
+              <button
+                onClick={() => onOpenAdmin('customer')}
+                className="inline-flex items-center gap-1.5 rounded-full border border-[#046a38]/20 bg-[#e6f4ea] px-4 py-1.5 text-xs font-sans font-bold text-[#065f46] hover:bg-[#d4edd9] active:scale-[0.98] transition-all select-none"
+                id="navbar-login-btn"
+              >
+                <User className="w-4 h-4 fill-none" />
+                <span>Login</span>
+              </button>
+
+              {/* Dropdown Options */}
+              <div className="absolute top-[130%] right-0 w-44 bg-white border border-neutral-200/80 rounded-2xl shadow-xl p-1.5 hidden group-hover:block z-[60] overflow-hidden text-neutral-800 animate-fadeIn">
+                <button
+                  onClick={() => onOpenAdmin('customer')}
+                  className="w-full text-left px-3 py-2 rounded-xl text-[11px] font-bold font-sans flex items-center gap-2 hover:bg-[#e6f4ea] text-[#065f46] transition-colors"
+                >
+                  <User className="w-3.5 h-3.5 text-[#065f46]" />
+                  <span>Customer Portal</span>
+                </button>
+                <button
+                  onClick={() => onOpenAdmin('owner')}
+                  className="w-full text-left px-3 py-2 rounded-xl text-[11px] font-bold font-sans flex items-center gap-2 hover:bg-[#fdf2e9] text-[#ea580c] transition-colors border-t border-neutral-100/50"
+                >
+                  <Lock className="w-3.5 h-3.5 text-[#ea580c]" />
+                  <span>Store Owner</span>
+                </button>
+              </div>
+            </div>
 
             {/* Shortlist Bag Heart */}
             <button

@@ -35,6 +35,7 @@ export default function App() {
   const [products, setProducts] = useState<Product[]>([]);
   const [cart, setCart] = useState<Product[]>([]);
   const [isLoginOpen, setIsLoginOpen] = useState<boolean>(false);
+  const [loginTab, setLoginTab] = useState<'customer' | 'owner'>('customer');
 
   // 1. LocalStorage synchronization for shortlisted products
   useEffect(() => {
@@ -150,8 +151,8 @@ export default function App() {
         onOpenShortlist={() => setIsShortlistDrawerOpen(true)}
         onOpenCart={() => setIsCartDrawerOpen(true)}
         onOpenInquiryModal={handleOpenInquiryModal}
-        onOpenAdmin={() => {
-          setAdminError('');
+        onOpenAdmin={(tab) => {
+          setLoginTab(tab);
           setIsLoginOpen(true);
         }}
         onSearchChange={setSearchQuery}
@@ -179,6 +180,7 @@ export default function App() {
 
         {isLoginOpen && (
           <AdminLogin
+            initialTab={loginTab}
             onClose={() => setIsLoginOpen(false)}
           />
         )}

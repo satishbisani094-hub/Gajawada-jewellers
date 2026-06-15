@@ -3,10 +3,11 @@ import { X, CheckCircle, ShieldAlert, Users, TrendingUp, HelpCircle } from 'luci
 
 interface AdminLoginProps {
   onClose: () => void;
+  initialTab?: 'customer' | 'owner';
 }
 
-export default function AdminLogin({ onClose }: AdminLoginProps) {
-  const [activeTab, setActiveTab] = useState<'customer' | 'owner'>('customer');
+export default function AdminLogin({ onClose, initialTab = 'customer' }: AdminLoginProps) {
+  const [activeTab, setActiveTab] = useState<'customer' | 'owner'>(initialTab);
 
   // Customer Form State
   const [fullName, setFullName] = useState('');
