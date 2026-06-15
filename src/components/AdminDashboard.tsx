@@ -13,10 +13,7 @@ interface AdminDashboardProps {
 export default function AdminDashboard({ categories, products, onSaveProducts, onDeleteProduct, onClose }: AdminDashboardProps) {
   const [name, setName] = useState('');
   const [category, setCategory] = useState(categories[0]?.id || '');
-  const [description, setDescription] = useState('');
   const [imageUrl, setImageUrl] = useState('');
-  const [purity, setPurity] = useState('22K Gold');
-  const [weight, setWeight] = useState('');
   const [price, setPrice] = useState('');
   const [originalPrice, setOriginalPrice] = useState('');
   const [rating, setRating] = useState('4.7');
@@ -30,10 +27,7 @@ export default function AdminDashboard({ categories, products, onSaveProducts, o
   const resetForm = () => {
     setName('');
     setCategory(categories[0]?.id || '');
-    setDescription('');
     setImageUrl('');
-    setPurity('22K Gold');
-    setWeight('');
     setPrice('');
     setOriginalPrice('');
     setRating('4.7');
@@ -45,7 +39,7 @@ export default function AdminDashboard({ categories, products, onSaveProducts, o
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !category || !description) {
+    if (!name || !category) {
       return;
     }
 
@@ -53,10 +47,10 @@ export default function AdminDashboard({ categories, products, onSaveProducts, o
       id: createId(name),
       name,
       category,
-      description,
+      description: 'Handcrafted premium BIS Hallmarked jewellery piece.',
       imageUrl: imageUrl || 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=600&auto=format&fit=crop',
-      purity,
-      weight: weight || 'Custom weight',
+      purity: '22K Gold',
+      weight: 'Custom weight',
       price: price ? Number(price) : undefined,
       originalPrice: originalPrice ? Number(originalPrice) : undefined,
       rating: rating ? Number(rating) : undefined,
@@ -111,44 +105,16 @@ export default function AdminDashboard({ categories, products, onSaveProducts, o
               </div>
 
               <label className="space-y-2 text-sm text-neutral-300 block">
-                Description
-                <textarea
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  className="w-full rounded-2xl border border-neutral-800 bg-neutral-950 px-4 py-3 text-sm text-white outline-none focus:border-gold-500 resize-none min-h-[120px]"
+                Image URL
+                <input
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  className="w-full rounded-xl border border-neutral-800 bg-neutral-950 px-4 py-3 text-sm text-white outline-none focus:border-gold-500"
+                  placeholder="https://..."
                 />
               </label>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <label className="space-y-2 text-sm text-neutral-300">
-                  Image URL
-                  <input
-                    value={imageUrl}
-                    onChange={(e) => setImageUrl(e.target.value)}
-                    className="w-full rounded-xl border border-neutral-800 bg-neutral-950 px-4 py-3 text-sm text-white outline-none focus:border-gold-500"
-                    placeholder="https://..."
-                  />
-                </label>
-                <label className="space-y-2 text-sm text-neutral-300">
-                  Purity
-                  <input
-                    value={purity}
-                    onChange={(e) => setPurity(e.target.value)}
-                    className="w-full rounded-xl border border-neutral-800 bg-neutral-950 px-4 py-3 text-sm text-white outline-none focus:border-gold-500"
-                  />
-                </label>
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                <label className="space-y-2 text-sm text-neutral-300">
-                  Weight
-                  <input
-                    value={weight}
-                    onChange={(e) => setWeight(e.target.value)}
-                    className="w-full rounded-xl border border-neutral-800 bg-neutral-950 px-4 py-3 text-sm text-white outline-none focus:border-gold-500"
-                    placeholder="e.g. 24 grams"
-                  />
-                </label>
                 <label className="space-y-2 text-sm text-neutral-300">
                   Price
                   <input
@@ -160,9 +126,6 @@ export default function AdminDashboard({ categories, products, onSaveProducts, o
                     placeholder="e.g. 3699"
                   />
                 </label>
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2">
                 <label className="space-y-2 text-sm text-neutral-300">
                   Original Price
                   <input
@@ -174,6 +137,9 @@ export default function AdminDashboard({ categories, products, onSaveProducts, o
                     placeholder="e.g. 6999"
                   />
                 </label>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
                 <label className="space-y-2 text-sm text-neutral-300">
                   Rating
                   <input
@@ -187,9 +153,6 @@ export default function AdminDashboard({ categories, products, onSaveProducts, o
                     placeholder="e.g. 4.7"
                   />
                 </label>
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2">
                 <label className="space-y-2 text-sm text-neutral-300">
                   Review Count
                   <input
@@ -198,16 +161,7 @@ export default function AdminDashboard({ categories, products, onSaveProducts, o
                     value={reviewCount}
                     onChange={(e) => setReviewCount(e.target.value)}
                     className="w-full rounded-xl border border-neutral-800 bg-neutral-950 px-4 py-3 text-sm text-white outline-none focus:border-gold-500"
-                    placeholder="e.g. 193"
-                  />
-                </label>
-                <label className="inline-flex flex-col justify-between gap-2 text-sm text-neutral-300">
-                  <span>Bestseller</span>
-                  <input
-                    type="checkbox"
-                    checked={isBestseller}
-                    onChange={(e) => setIsBestseller(e.target.checked)}
-                    className="h-4 w-4 rounded border-neutral-700 bg-neutral-900 text-gold-500 focus:ring-gold-500"
+                    placeholder="e.g. 120"
                   />
                 </label>
               </div>
@@ -220,6 +174,15 @@ export default function AdminDashboard({ categories, products, onSaveProducts, o
                     onChange={(e) => setTagsText(e.target.value)}
                     className="w-full rounded-xl border border-neutral-800 bg-neutral-950 px-4 py-3 text-sm text-white outline-none focus:border-gold-500"
                     placeholder="e.g. Bridal, Kundan, Gold"
+                  />
+                </label>
+                <label className="inline-flex flex-col justify-between gap-2 text-sm text-neutral-300">
+                  <span>Bestseller</span>
+                  <input
+                    type="checkbox"
+                    checked={isBestseller}
+                    onChange={(e) => setIsBestseller(e.target.checked)}
+                    className="h-4 w-4 rounded border-neutral-700 bg-neutral-900 text-gold-500 focus:ring-gold-500"
                   />
                 </label>
               </div>
