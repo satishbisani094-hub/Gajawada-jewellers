@@ -137,7 +137,7 @@ export default function AdminLogin({
           <button
             type="button"
             onClick={onClose}
-            className="absolute top-6 right-6 text-neutral-450 hover:text-neutral-650 transition-colors p-1 z-10"
+            className="absolute top-6 right-6 text-neutral-400 hover:text-neutral-600 transition-colors p-1 z-10 cursor-pointer"
             aria-label="Close portal"
           >
             <X className="w-5 h-5" />
