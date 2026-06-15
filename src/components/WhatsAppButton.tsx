@@ -14,7 +14,7 @@ export default function WhatsAppButton() {
 
   const triggerWhatsApp = () => {
     const text = `Hi Gajawada Jewellers! I am exploring your gold, diamond, and bridal collection online and would like to ask a few questions. Could you please help me?`;
-    window.open(`https://wa.me/919573838383?text=${encodeURIComponent(text)}`, '_blank');
+    window.open(`https://wa.me/918919329919?text=${encodeURIComponent(text)}`, '_blank');
   };
 
   return (

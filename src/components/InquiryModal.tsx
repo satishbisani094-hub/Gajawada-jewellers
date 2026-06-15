@@ -50,7 +50,7 @@ export default function InquiryModal({ isOpen, onClose, product, onClearProduct 
 
   const handleWhatsAppInstant = () => {
     const text = messageText || `Hi Gajawada Jewellers! I would like to request an exclusive bridal consultation or ask a question about your custom gold casting designs.`;
-    const formatUrl = `https://wa.me/919573838383?text=${encodeURIComponent(text)}`;
+    const formatUrl = `https://wa.me/918919329919?text=${encodeURIComponent(text)}`;
     window.open(formatUrl, '_blank');
   };
 

@@ -10,7 +10,6 @@ import { collectionCategories } from './data/jewelryData';
 // Importing premium modular components
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
-import About from './components/About';
 import Collections from './components/Collections';
 import AdminLogin from './components/AdminLogin';
 import CartDrawer from './components/CartDrawer';
@@ -170,9 +169,6 @@ export default function App() {
       <main className="relative">
         {/* Cinematic Landing Screen */}
         <Hero onOpenInquiryModal={() => handleOpenInquiryModal(null)} />
-
-        {/* Our Heritage Story */}
-        <About />
 
         {/* Dynamic Jewelry Catalogue & Categories */}
         <Collections

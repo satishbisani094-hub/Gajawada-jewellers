@@ -28,7 +28,7 @@ export default function ShortlistDrawer({
 
     const message = `Hi Gajawada Jewellers! I am browsing your online showroom in Hyderabad and have shortlisted the following beautiful items for my wedding/jewellery collection:%0A%0A${itemsText}%0A%0ACould we please schedule an in-store appointment and provide a customized quote for these ornaments? Thank you!`;
     
-    window.open(`https://wa.me/919573838383?text=${message}`, '_blank');
+    window.open(`https://wa.me/918919329919?text=${message}`, '_blank');
   };
 
   const resolveImagePath = (url: string) => {

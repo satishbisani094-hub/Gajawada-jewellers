@@ -323,7 +323,7 @@ export default function Collections({
 
                   {/* Immediate WhatsApp trigger */}
                   <a
-                    href={`https://wa.me/919573838383?text=Hi%20Gajawada%20Jewellers,%20I%20saw%20your%2520beautiful%2520'${encodeURIComponent(selectedProduct.name)}'%2520online%2520and%2520would%2520like%2520to%2520get%2520a%2520price%2520quote%2520for%2520it%2520at%2520your%2520Boduppal%2520showroom.%2520Details%2520-%2520Purity:%2520${encodeURIComponent(selectedProduct.purity)}%2520Weight:%2520${encodeURIComponent(selectedProduct.weight || 'As requested')}`}
+                    href={`https://wa.me/918919329919?text=Hi%20Gajawada%20Jewellers,%20I%20saw%20your%2520beautiful%2520'${encodeURIComponent(selectedProduct.name)}'%2520online%2520and%2520would%2520like%2520to%2520get%2520a%2520price%2520quote%2520for%2520it%2520at%2520your%2520Boduppal%2520showroom.%2520Details%2520-%2520Purity:%2520${encodeURIComponent(selectedProduct.purity)}%2520Weight:%2520${encodeURIComponent(selectedProduct.weight || 'As requested')}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center gap-1.5 bg-[#25D366] hover:bg-[#20ba5a] text-black text-xs font-sans font-bold py-3 px-4 rounded w-full transition-colors text-center"

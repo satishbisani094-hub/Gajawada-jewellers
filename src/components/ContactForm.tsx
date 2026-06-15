@@ -34,7 +34,7 @@ export default function ContactForm({ initialSubject = '' }: ContactFormProps) {
   // WhatsApp click handler
   const triggerWhatsApp = () => {
     const defaultText = `Hi Gajawada Jewellers! I am interested in exploring custom gold jewelry and bridal consulting options. Please let me know the appropriate team to contact. Thanks!`;
-    window.open(`https://wa.me/919573838383?text=${encodeURIComponent(defaultText)}`, '_blank');
+    window.open(`https://wa.me/918919329919?text=${encodeURIComponent(defaultText)}`, '_blank');
   };
 
   return (
@@ -70,13 +70,13 @@ export default function ContactForm({ initialSubject = '' }: ContactFormProps) {
               <div className="space-y-4 pt-4">
                 {/* Phone support */}
                 <a
-                  href="tel:+919848521360"
+                  href="tel:+918919329919"
                   className="flex items-center gap-4 bg-neutral-900/60 p-4 rounded border border-neutral-900 hover:border-gold-500/30 transition-all text-left"
                 >
                   <Phone className="w-5 h-5 text-gold-400 shrink-0" />
                   <div>
                     <h4 className="text-[10px] font-sans font-bold text-neutral-400 uppercase tracking-widest">Call Showroom</h4>
-                    <span className="text-xs font-mono text-neutral-200 mt-0.5 block">+91 98485 21360</span>
+                    <span className="text-xs font-mono text-neutral-200 mt-0.5 block">+91 89193 29919</span>
                   </div>
                 </a>
 
@@ -88,7 +88,7 @@ export default function ContactForm({ initialSubject = '' }: ContactFormProps) {
                   <MessageSquare className="w-5 h-5 text-green-400 shrink-0" />
                   <div>
                     <h4 className="text-[10px] font-sans font-bold text-neutral-400 uppercase tracking-widest">WhatsApp Support</h4>
-                    <span className="text-xs font-mono text-neutral-200 mt-0.5 block">+91 95738 38383</span>
+                    <span className="text-xs font-mono text-neutral-200 mt-0.5 block">+91 89193 29919</span>
                   </div>
                 </button>
 

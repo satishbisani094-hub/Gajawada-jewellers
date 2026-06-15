@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Menu, X, Heart, Search, Phone, ChevronDown, Award, TrendingUp, TrendingDown, Clock, MapPin, ShoppingCart, User, Lock } from 'lucide-react';
+import { Menu, X, Heart, Search, Phone, Award, TrendingUp, TrendingDown, Clock, MapPin, ShoppingCart, User, Lock } from 'lucide-react';
 import { liveRates } from '../data/jewelryData';
 import { Product, LiveRate } from '../types';
 import { fetchLiveRates } from '../utils/goldRateService';
@@ -151,20 +151,7 @@ export default function Navbar({
               <a href="#hero" className="hover:text-gold-300 transition-colors">Home</a>
             </li>
             <li>
-              <a href="#about" className="hover:text-gold-300 transition-colors">Our Story</a>
-            </li>
-            <li className="relative group">
-              <a href="#collections" className="hover:text-gold-300 transition-colors flex items-center gap-1">
-                Collections <ChevronDown className="w-3 h-3 group-hover:rotate-180 transition-transform duration-300" />
-              </a>
-              {/* Dropdown Menu */}
-              <div className="absolute top-[160%] left-1/2 -translate-x-1/2 w-52 bg-neutral-900/98 border border-gold-900/30 rounded shadow-2xl p-4 py-2 hidden group-hover:grid grid-cols-1 gap-2 text-left lowercase pointer-events-auto">
-                <a href="#collections?cat=gold-necklaces" className="hover:text-gold-300 text-left capitalize tracking-wider p-1 transition-colors text-xs text-neutral-400">Gold Necklaces</a>
-                <a href="#collections?cat=bridal-collections" className="hover:text-gold-300 text-left capitalize tracking-wider p-1 transition-colors text-xs text-neutral-400">Bridal Collections</a>
-                <a href="#collections?cat=diamond-jewelry" className="hover:text-gold-300 text-left capitalize tracking-wider p-1 transition-colors text-xs text-neutral-400">Diamond Jewelry</a>
-                <a href="#collections?cat=bangles-bracelets" className="hover:text-gold-300 text-left capitalize tracking-wider p-1 transition-colors text-xs text-neutral-400">Bangles & Bracelets</a>
-                <a href="#collections?cat=customized-jewelry" className="hover:text-gold-300 text-left capitalize tracking-wider p-1 transition-colors text-xs text-neutral-400">Custom Designs</a>
-              </div>
+              <a href="#collections" className="hover:text-gold-300 transition-colors">Collections</a>
             </li>
             <li>
               <a href="#services" className="hover:text-gold-300 transition-colors">Services</a>
@@ -304,7 +291,7 @@ export default function Navbar({
 
             {/* Store Call CTA */}
             <a
-              href="tel:+919848521360"
+              href="tel:+918919329919"
               className="hidden sm:flex items-center gap-1.5 text-xs font-sans font-bold bg-gold-900/10 border border-gold-500/35 text-gold-300 px-3 py-1.5 rounded hover:bg-gold-500 hover:text-black transition-all duration-300"
             >
               <Phone className="w-3.5 h-3.5" /> Call Store
@@ -371,15 +358,6 @@ export default function Navbar({
               </li>
               <li>
                 <a
-                  href="#about"
-                  onClick={() => setIsOpen(false)}
-                  className="hover:text-gold-300 transition-colors"
-                >
-                  Our Story
-                </a>
-              </li>
-              <li>
-                <a
                   href="#collections"
                   onClick={() => setIsOpen(false)}
                   className="hover:text-gold-300 transition-colors"
@@ -424,7 +402,7 @@ export default function Navbar({
 
             <div className="grid grid-cols-2 gap-3">
               <a
-                href="tel:+919848521360"
+                href="tel:+918919329919"
                 className="flex items-center justify-center gap-2 text-xs font-sans font-bold bg-neutral-900 border border-gold-500/25 text-gold-300 py-3 rounded"
               >
                 <Phone className="w-4 h-4" /> Call Us
