@@ -12,7 +12,6 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import About from './components/About';
 import Collections from './components/Collections';
-import AdminDashboard from './components/AdminDashboard';
 import AdminLogin from './components/AdminLogin';
 import CartDrawer from './components/CartDrawer';
 import WhyChooseUs from './components/WhyChooseUs';
@@ -35,10 +34,7 @@ export default function App() {
   const [activeInquiryProduct, setActiveInquiryProduct] = useState<Product | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [cart, setCart] = useState<Product[]>([]);
-  const [isAdminOpen, setIsAdminOpen] = useState<boolean>(false);
   const [isLoginOpen, setIsLoginOpen] = useState<boolean>(false);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [adminError, setAdminError] = useState<string>('');
 
   // 1. LocalStorage synchronization for shortlisted products
   useEffect(() => {
@@ -183,31 +179,7 @@ export default function App() {
 
         {isLoginOpen && (
           <AdminLogin
-            onAuthenticate={(username, password) => {
-              const validUser = 'admin';
-              const validPass = 'admin@123';
-
-              if (username === validUser && password === validPass) {
-                setIsAuthenticated(true);
-                setIsAdminOpen(true);
-                setIsLoginOpen(false);
-                setAdminError('');
-              } else {
-                setAdminError('Invalid username or password.');
-              }
-            }}
             onClose={() => setIsLoginOpen(false)}
-            errorMessage={adminError}
-          />
-        )}
-
-        {isAdminOpen && isAuthenticated && (
-          <AdminDashboard
-            categories={collectionCategories}
-            products={products}
-            onSaveProducts={saveProducts}
-            onDeleteProduct={handleDeleteProduct}
-            onClose={() => setIsAdminOpen(false)}
           />
         )}
 
@@ -263,21 +235,6 @@ export default function App() {
         product={activeInquiryProduct}
         onClearProduct={() => setActiveInquiryProduct(null)}
       />
-
-      {/* Admin access state guard */}
-      {isAdminOpen && !isAuthenticated && !isLoginOpen && (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/60">
-          <div className="rounded-3xl border border-red-500/30 bg-neutral-950/95 p-6 text-center text-sm text-red-100">
-            <p className="mb-3">Admin access is protected. Please log in again if you want to access the dashboard.</p>
-            <button
-              onClick={() => setIsLoginOpen(true)}
-              className="rounded-full bg-gold-500 px-5 py-2 text-black font-semibold uppercase tracking-[0.12em]"
-            >
-              Open Login
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* Floating active WhatsApp widget */}
       <WhatsAppButton />
