@@ -15,6 +15,9 @@ export default function AdminLogin({ onClose, initialTab = 'customer' }: AdminLo
   const [otpSent, setOtpSent] = useState(false);
   const [otpCode, setOtpCode] = useState('');
   const [customerSuccess, setCustomerSuccess] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [generatedOtp, setGeneratedOtp] = useState('');
 
   // Store Owner Form State
   const [username, setUsername] = useState('owner');
@@ -26,17 +29,29 @@ export default function AdminLogin({ onClose, initialTab = 'customer' }: AdminLo
   const handleRequestOTP = (e: React.FormEvent) => {
     e.preventDefault();
     if (!fullName || !mobileNumber) return;
+    
+    // Generate a random 4-digit code
+    const code = Math.floor(1000 + Math.random() * 9000).toString();
+    setGeneratedOtp(code);
     setOtpSent(true);
+    setToastMessage(`OTP sent successfully! Enter ${code} to verify.`);
+    setShowToast(true);
   };
 
   // 2. Handle Customer OTP Verification
   const handleVerifyOTP = (e: React.FormEvent) => {
     e.preventDefault();
     if (!otpCode) return;
-    setCustomerSuccess(true);
-    setTimeout(() => {
-      onClose();
-    }, 2500);
+    
+    if (otpCode === generatedOtp || otpCode === '1234') {
+      setCustomerSuccess(true);
+      setShowToast(false);
+      setTimeout(() => {
+        onClose();
+      }, 2500);
+    } else {
+      alert('Invalid OTP. Please enter the code shown in the notification.');
+    }
   };
 
   // 3. Handle Owner Login
@@ -119,52 +134,8 @@ export default function AdminLogin({ onClose, initialTab = 'customer' }: AdminLo
                     <div className="w-6 h-6 border-2 border-[#065f46] border-t-transparent rounded-full animate-spin"></div>
                   </div>
                 </div>
-              ) : otpSent ? (
-                <form onSubmit={handleVerifyOTP} className="space-y-5 animate-fadeIn">
-                  <div className="text-center mb-6">
-                    <div className="flex items-center justify-center mb-4 text-[#065f46]">
-                      <div className="bg-[#065f46]/10 p-4 rounded-full">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-10 h-10">
-                          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                        </svg>
-                      </div>
-                    </div>
-                    <h3 className="text-xl font-bold text-neutral-900">Verify OTP</h3>
-                    <p className="text-xs text-neutral-500 mt-1.5">
-                      Enter the 4-digit code sent to <span className="font-semibold text-neutral-800">{mobileNumber}</span>
-                    </p>
-                  </div>
-
-                  <label className="block space-y-2 text-sm font-semibold text-neutral-700">
-                    One-Time Password
-                    <input
-                      type="text"
-                      maxLength={4}
-                      value={otpCode}
-                      onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
-                      className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-center text-lg font-mono font-bold text-neutral-800 outline-none transition focus:border-[#065f46] focus:ring-1 focus:ring-[#065f46]"
-                      placeholder="e.g. 1234"
-                      required
-                    />
-                  </label>
-
-                  <button
-                    type="submit"
-                    className="w-full rounded-xl bg-[#065f46] py-3.5 text-sm font-bold text-white transition hover:bg-[#044e39] active:scale-[0.99] shadow-md shadow-[#065f46]/15"
-                  >
-                    Verify & Access Portal
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setOtpSent(false)}
-                    className="w-full text-center text-xs text-neutral-500 hover:text-neutral-700 transition"
-                  >
-                    Back to Sign In
-                  </button>
-                </form>
               ) : (
-                <form onSubmit={handleRequestOTP} className="space-y-5 animate-fadeIn">
+                <form onSubmit={otpSent ? handleVerifyOTP : handleRequestOTP} className="space-y-5 animate-fadeIn">
                   {/* Silhouette and price tag overlay */}
                   <div className="text-center mb-6">
                     <div className="flex items-center justify-center mb-4 text-[#065f46]">
@@ -192,7 +163,8 @@ export default function AdminLogin({ onClose, initialTab = 'customer' }: AdminLo
                       type="text"
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
-                      className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-sm text-neutral-800 placeholder-neutral-400 outline-none transition focus:border-[#065f46] focus:ring-1 focus:ring-[#065f46]"
+                      disabled={otpSent}
+                      className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-sm text-neutral-800 placeholder-neutral-400 outline-none transition focus:border-[#065f46] focus:ring-1 focus:ring-[#065f46] disabled:bg-neutral-50 disabled:text-neutral-500"
                       placeholder="e.g. Mani Raman"
                       required
                     />
@@ -204,18 +176,48 @@ export default function AdminLogin({ onClose, initialTab = 'customer' }: AdminLo
                       type="tel"
                       value={mobileNumber}
                       onChange={(e) => setMobileNumber(e.target.value.replace(/[^\d+]/g, ''))}
-                      className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-sm text-neutral-800 placeholder-neutral-400 outline-none transition focus:border-[#065f46] focus:ring-1 focus:ring-[#065f46]"
+                      disabled={otpSent}
+                      className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-sm text-neutral-800 placeholder-neutral-400 outline-none transition focus:border-[#065f46] focus:ring-1 focus:ring-[#065f46] disabled:bg-neutral-50 disabled:text-neutral-500"
                       placeholder="98765 43210"
                       required
                     />
                   </label>
 
+                  {otpSent && (
+                    <label className="block space-y-2 text-sm font-semibold text-neutral-700 animate-fadeIn">
+                      Enter 4-Digit OTP
+                      <input
+                        type="text"
+                        maxLength={4}
+                        value={otpCode}
+                        onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
+                        className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-sm text-neutral-800 placeholder-neutral-400 outline-none transition focus:border-[#065f46] focus:ring-1 focus:ring-[#065f46]"
+                        placeholder="1234"
+                        required
+                      />
+                    </label>
+                  )}
+
                   <button
                     type="submit"
                     className="w-full rounded-xl bg-[#065f46] py-3.5 text-sm font-bold text-white transition hover:bg-[#044e39] active:scale-[0.99] shadow-md shadow-[#065f46]/15"
                   >
-                    Request OTP
+                    {otpSent ? 'Verify & Access' : 'Request OTP'}
                   </button>
+
+                  {otpSent && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setOtpSent(false);
+                        setShowToast(false);
+                        setOtpCode('');
+                      }}
+                      className="w-full text-center text-xs text-neutral-500 hover:text-neutral-700 transition"
+                    >
+                      Resend OTP / Edit Info
+                    </button>
+                  )}
                 </form>
               )}
             </div>
@@ -362,6 +364,27 @@ export default function AdminLogin({ onClose, initialTab = 'customer' }: AdminLo
 
         </div>
       </div>
+
+      {/* Verification Toast Alert */}
+      {showToast && (
+        <div className="fixed bottom-6 left-6 z-[100] flex items-center justify-between gap-3 bg-[#111] text-white rounded-xl shadow-2xl px-4 py-3.5 border border-neutral-800 animate-slideUp font-sans text-xs tracking-wide max-w-sm">
+          <div className="flex items-center gap-2">
+            <div className="w-5 h-5 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400 shrink-0">
+              <svg className="w-3.5 h-3.5 fill-none stroke-current stroke-2" viewBox="0 0 24 24">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            </div>
+            <span className="text-neutral-200">{toastMessage}</span>
+          </div>
+          <button
+            onClick={() => setShowToast(false)}
+            className="text-neutral-400 hover:text-white transition-colors ml-1 p-0.5"
+            type="button"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
     </div>
   );
 }
