@@ -10,6 +10,7 @@ interface AdminLoginProps {
   categories?: CollectionCategory[];
   onAddProduct?: (product: Product) => void;
   onDeleteProduct?: (productId: string) => void;
+  currentUser?: { type: 'customer' | 'owner'; name: string } | null;
 }
 
 export default function AdminLogin({
@@ -20,15 +21,18 @@ export default function AdminLogin({
   categories = [],
   onAddProduct,
   onDeleteProduct,
+  currentUser,
 }: AdminLoginProps) {
-  const [activeTab, setActiveTab] = useState<'customer' | 'owner'>(initialTab);
+  const [activeTab, setActiveTab] = useState<'customer' | 'owner'>(
+    currentUser ? currentUser.type : initialTab
+  );
 
   // Customer Form State
-  const [fullName, setFullName] = useState('');
+  const [fullName, setFullName] = useState(currentUser?.type === 'customer' ? currentUser.name : '');
   const [mobileNumber, setMobileNumber] = useState('');
   const [otpSent, setOtpSent] = useState(false);
   const [otpCode, setOtpCode] = useState('');
-  const [customerSuccess, setCustomerSuccess] = useState(false);
+  const [customerSuccess, setCustomerSuccess] = useState(currentUser?.type === 'customer');
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [generatedOtp, setGeneratedOtp] = useState('');
@@ -36,7 +40,7 @@ export default function AdminLogin({
   // Store Owner Form State
   const [username, setUsername] = useState('owner');
   const [password, setPassword] = useState('');
-  const [ownerSuccess, setOwnerSuccess] = useState(false);
+  const [ownerSuccess, setOwnerSuccess] = useState(currentUser?.type === 'owner');
   const [ownerError, setOwnerError] = useState('');
 
   // Form state for adding products
@@ -122,55 +126,71 @@ export default function AdminLogin({
     }
   };
 
+  const isUserLoggedIn = customerSuccess || ownerSuccess;
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 py-6 backdrop-blur-sm">
-      <div className="w-full max-w-[460px] rounded-[28px] bg-white shadow-2xl overflow-hidden font-sans border border-neutral-100">
+      <div className="w-full max-w-[460px] rounded-[28px] bg-white shadow-2xl overflow-hidden font-sans border border-neutral-100 relative">
         
-        {/* TAB CONTROLS */}
-        <div className="flex border-b border-neutral-200/80 relative">
-          <button
-            type="button"
-            onClick={() => {
-              if (!customerSuccess && !ownerSuccess) {
-                setActiveTab('customer');
-                setOwnerError('');
-              }
-            }}
-            className={`flex-1 py-4 text-center font-bold text-sm tracking-wide transition-all ${
-              activeTab === 'customer'
-                ? 'text-[#065f46] border-b-[3px] border-[#065f46]'
-                : 'text-neutral-500 hover:text-neutral-700 bg-neutral-50/50'
-            }`}
-            disabled={customerSuccess || ownerSuccess}
-          >
-            Customer Portal
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              if (!customerSuccess && !ownerSuccess) {
-                setActiveTab('owner');
-                setOwnerError('');
-              }
-            }}
-            className={`flex-1 py-4 text-center font-bold text-sm tracking-wide transition-all ${
-              activeTab === 'owner'
-                ? 'text-[#ea580c] border-b-[3px] border-[#ea580c]'
-                : 'text-neutral-500 hover:text-neutral-700 bg-neutral-50/50'
-            }`}
-            disabled={customerSuccess || ownerSuccess}
-          >
-            Store Owner
-          </button>
+        {/* If logged in, show a close button in the top right of the card */}
+        {isUserLoggedIn && (
           <button
             type="button"
             onClick={onClose}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 transition-colors p-1"
+            className="absolute top-6 right-6 text-neutral-450 hover:text-neutral-650 transition-colors p-1 z-10"
             aria-label="Close portal"
           >
             <X className="w-5 h-5" />
           </button>
-        </div>
+        )}
+
+        {/* TAB CONTROLS - Only show if not logged in */}
+        {!isUserLoggedIn && (
+          <div className="flex border-b border-neutral-200/80 relative">
+            <button
+              type="button"
+              onClick={() => {
+                if (!customerSuccess && !ownerSuccess) {
+                  setActiveTab('customer');
+                  setOwnerError('');
+                }
+              }}
+              className={`flex-1 py-4 text-center font-bold text-sm tracking-wide transition-all ${
+                activeTab === 'customer'
+                  ? 'text-[#065f46] border-b-[3px] border-[#065f46]'
+                  : 'text-neutral-500 hover:text-neutral-700 bg-neutral-50/50'
+              }`}
+              disabled={customerSuccess || ownerSuccess}
+            >
+              Customer Portal
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (!customerSuccess && !ownerSuccess) {
+                  setActiveTab('owner');
+                  setOwnerError('');
+                }
+              }}
+              className={`flex-1 py-4 text-center font-bold text-sm tracking-wide transition-all ${
+                activeTab === 'owner'
+                  ? 'text-[#ea580c] border-b-[3px] border-[#ea580c]'
+                  : 'text-neutral-500 hover:text-neutral-700 bg-neutral-50/50'
+              }`}
+              disabled={customerSuccess || ownerSuccess}
+            >
+              Store Owner
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 transition-colors p-1"
+              aria-label="Close portal"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+        )}
 
         {/* PORTAL BODY CONTAINER */}
         <div className="p-8">
@@ -285,14 +305,6 @@ export default function AdminLogin({
             <div>
               {ownerSuccess ? (
                 <div className="space-y-5 animate-fadeIn text-neutral-800 relative">
-                  <button
-                    type="button"
-                    onClick={onClose}
-                    className="absolute -top-4 -right-4 text-neutral-400 hover:text-neutral-600 transition-colors p-1"
-                    aria-label="Close portal"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
                   <div className="text-center border-b border-neutral-100 pb-3">
                     <div className="flex items-center justify-center text-[#ea580c] mb-2">
                       <CheckCircle className="w-10 h-10 stroke-[1.5]" />

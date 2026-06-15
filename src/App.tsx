@@ -190,6 +190,7 @@ export default function App() {
             onDeleteProduct={handleDeleteProduct}
             onClose={() => setIsLoginOpen(false)}
             onLoginSuccess={setCurrentUser}
+            currentUser={currentUser}
           />
         )}
 
