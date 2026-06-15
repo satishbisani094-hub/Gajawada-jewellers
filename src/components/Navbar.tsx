@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Menu, X, Heart, Search, Phone, ChevronDown, Award, TrendingUp, TrendingDown, Clock, MapPin, ShoppingCart } from 'lucide-react';
+import { Menu, X, Heart, Search, Phone, ChevronDown, Award, TrendingUp, TrendingDown, Clock, MapPin, ShoppingCart, User } from 'lucide-react';
 import { liveRates } from '../data/jewelryData';
 import { Product, LiveRate } from '../types';
 import { fetchLiveRates } from '../utils/goldRateService';
@@ -169,6 +169,16 @@ export default function Navbar({
               </button>
             </div>
 
+            {/* Custom Login Portal Button */}
+            <button
+              onClick={onOpenAdmin}
+              className="inline-flex items-center gap-1.5 rounded-full border border-[#046a38]/20 bg-[#e6f4ea] px-4 py-1.5 text-xs font-sans font-bold text-[#065f46] hover:bg-[#d4edd9] active:scale-[0.98] transition-all select-none"
+              id="navbar-login-btn"
+            >
+              <User className="w-4 h-4 fill-none" />
+              <span>Login</span>
+            </button>
+
             {/* Shortlist Bag Heart */}
             <button
               onClick={onOpenShortlist}
@@ -213,15 +223,6 @@ export default function Navbar({
               id="navbar-book-btn"
             >
               Inquire Now
-            </button>
-
-            {/* Admin Panel btn */}
-            <button
-              onClick={onOpenAdmin}
-              className="hidden xl:inline-flex items-center gap-2 text-xs font-sans font-bold bg-neutral-900/90 hover:bg-neutral-800 text-white px-4 py-2 rounded border border-gold-500/30 transition-all duration-300 tracking-wider uppercase"
-              id="navbar-admin-btn"
-            >
-              Admin
             </button>
 
             {/* Mobile Menu Toggle Button */}
