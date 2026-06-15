@@ -72,19 +72,9 @@ export default function App() {
         if (response.ok) {
           const result = await response.json();
           if (result && Array.isArray(result.products)) {
-            const remoteProducts = result.products;
-            if (remoteProducts.length > 0) {
-              setProducts(remoteProducts);
-              localStorage.setItem('gajawada_products', JSON.stringify(remoteProducts));
-              return;
-            } else {
-              // Remote database is empty, auto-initialize it with the 17 default products
-              console.log('Remote database is empty. Initializing with default products...');
-              setProducts(allProducts);
-              localStorage.setItem('gajawada_products', JSON.stringify(allProducts));
-              saveProducts(allProducts);
-              return;
-            }
+            setProducts(result.products);
+            localStorage.setItem('gajawada_products', JSON.stringify(result.products));
+            return;
           }
         }
       } catch (e) {
