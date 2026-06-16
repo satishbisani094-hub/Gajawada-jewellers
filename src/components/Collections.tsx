@@ -25,6 +25,7 @@ export default function Collections({
   const [localSearch, setLocalSearch] = useState<string>('');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [selectedTag, setSelectedTag] = useState<'All' | 'Necklace' | 'Earings' | 'Braclets'>('All');
 
   // Keep local search sync with global search from navbar
   useEffect(() => {
@@ -48,8 +49,28 @@ export default function Collections({
       );
     }
 
+    if (selectedTag !== 'All') {
+      const tag = selectedTag.toLowerCase();
+      result = result.filter(p => {
+        const name = p.name.toLowerCase();
+        const category = p.category.toLowerCase();
+        const desc = p.description.toLowerCase();
+        
+        if (tag === 'necklace') {
+          return name.includes('necklace') || name.includes('chain') || name.includes('haram') || category.includes('neck') || category.includes('chain');
+        }
+        if (tag === 'earings') {
+          return name.includes('earring') || name.includes('stud') || name.includes('jhumka') || name.includes('ear') || category.includes('ear');
+        }
+        if (tag === 'braclets') {
+          return name.includes('bracelet') || name.includes('bangle') || name.includes('kada') || name.includes('kangan') || category.includes('bracelet') || category.includes('bangle');
+        }
+        return true;
+      });
+    }
+
     setFilteredProducts(result);
-  }, [localSearch, products]);
+  }, [localSearch, selectedTag, products]);
 
   // Helper to map template image placeholders to real generated asset paths
   const resolveProductImagePath = (imgUrl: string): string => {
@@ -104,6 +125,67 @@ export default function Collections({
               </button>
             )}
           </div>
+        </div>
+
+        {/* Category Pills Selector */}
+        <div className="flex flex-wrap gap-3 mb-10 justify-start">
+          {([
+            { 
+              id: 'All', 
+              name: 'All',
+              icon: (
+                <svg className="w-3.5 h-3.5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M6 3h12l4 6-10 13L2 9z"/>
+                  <path d="M11 3 8 9l4 13 4-13-3-6"/>
+                  <path d="M2 9h20"/>
+                </svg>
+              )
+            },
+            { 
+              id: 'Necklace', 
+              name: 'necklace',
+              icon: (
+                <svg className="w-3.5 h-3.5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 3c2 2 4 3 7 3s5-1 7-3M12 6v5M12 13a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
+                </svg>
+              )
+            },
+            { 
+              id: 'Earings', 
+              name: 'earings',
+              icon: (
+                <svg className="w-3.5 h-3.5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="8" cy="8" r="3"/>
+                  <circle cx="16" cy="8" r="3"/>
+                  <path d="M8 11v6M16 11v6M7 17h2M15 17h2"/>
+                </svg>
+              )
+            },
+            { 
+              id: 'Braclets', 
+              name: 'braclets',
+              icon: (
+                <svg className="w-3.5 h-3.5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="7" strokeDasharray="4 2"/>
+                  <rect x="11" y="4" width="2" height="2" rx="0.5" fill="currentColor"/>
+                  <rect x="11" y="18" width="2" height="2" rx="0.5" fill="currentColor"/>
+                </svg>
+              )
+            }
+          ] as const).map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => setSelectedTag(cat.id)}
+              className={`px-5 py-2.5 rounded-full text-xs font-mono font-bold tracking-wider transition-all duration-300 border flex items-center cursor-pointer ${
+                selectedTag === cat.id
+                  ? 'bg-gold-500 border-gold-400 text-black shadow-lg shadow-gold-500/10 scale-[1.02]'
+                  : 'bg-neutral-900/60 border-neutral-800 text-neutral-300 hover:text-white hover:border-gold-500/40'
+              }`}
+            >
+              {cat.icon}
+              <span>{cat.name}</span>
+            </button>
+          ))}
         </div>
 
         {/* Products Grid */}
