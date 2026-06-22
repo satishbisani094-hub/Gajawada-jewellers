@@ -2,6 +2,13 @@ import React, { useState } from 'react';
 import { X, CheckCircle, ShieldAlert, Users, TrendingUp, HelpCircle, PlusCircle, Trash2 } from 'lucide-react';
 import { Product, CollectionCategory } from '../types';
 
+const REGISTERED_CUSTOMERS = [
+  { mobile: '9876543210', name: 'Mani Raman' },
+  { mobile: '9988776655', name: 'Satish Bisani' },
+  { mobile: '9000012345', name: 'Gajawada Guest' },
+  { mobile: '8888888888', name: 'Test Customer' },
+];
+
 interface AdminLoginProps {
   onClose: () => void;
   initialTab?: 'customer' | 'owner';
@@ -36,6 +43,7 @@ export default function AdminLogin({
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [generatedOtp, setGeneratedOtp] = useState('');
+  const [customerError, setCustomerError] = useState('');
 
   // Store Owner Form State
   const [username, setUsername] = useState('owner');
@@ -89,6 +97,26 @@ export default function AdminLogin({
     e.preventDefault();
     if (!fullName || !mobileNumber) return;
     
+    // Normalize entered number
+    const cleanMobile = mobileNumber.replace(/\D/g, '');
+    const normalizedEntered = cleanMobile.length > 10 && cleanMobile.startsWith('91') 
+      ? cleanMobile.slice(-10) 
+      : cleanMobile;
+      
+    const existingCustomer = REGISTERED_CUSTOMERS.find(c => {
+      const cleanReg = c.mobile.replace(/\D/g, '');
+      const normalizedReg = cleanReg.length > 10 && cleanReg.startsWith('91')
+        ? cleanReg.slice(-10)
+        : cleanReg;
+      return normalizedEntered === normalizedReg;
+    });
+
+    if (!existingCustomer) {
+      setCustomerError("This mobile number is not registered. Try standard mock number: 9876543210");
+      return;
+    }
+
+    setCustomerError('');
     // Generate a random 4-digit code
     const code = Math.floor(1000 + Math.random() * 9000).toString();
     setGeneratedOtp(code);
@@ -102,10 +130,27 @@ export default function AdminLogin({
     e.preventDefault();
     if (!otpCode) return;
     
+    // Normalize entered number
+    const cleanMobile = mobileNumber.replace(/\D/g, '');
+    const normalizedEntered = cleanMobile.length > 10 && cleanMobile.startsWith('91') 
+      ? cleanMobile.slice(-10) 
+      : cleanMobile;
+
+    const existingCustomer = REGISTERED_CUSTOMERS.find(c => {
+      const cleanReg = c.mobile.replace(/\D/g, '');
+      const normalizedReg = cleanReg.length > 10 && cleanReg.startsWith('91')
+        ? cleanReg.slice(-10)
+        : cleanReg;
+      return normalizedEntered === normalizedReg;
+    });
+
     if (otpCode === generatedOtp || otpCode === '1234') {
       setCustomerSuccess(true);
       setShowToast(false);
-      onLoginSuccess({ type: 'customer', name: fullName || 'Customer' });
+      onLoginSuccess({ 
+        type: 'customer', 
+        name: existingCustomer ? existingCustomer.name : (fullName || 'Customer') 
+      });
       setTimeout(() => {
         onClose();
       }, 2500);
@@ -223,6 +268,13 @@ export default function AdminLogin({
                         required
                       />
                     </label>
+                  )}
+
+                  {customerError && (
+                    <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-xs text-red-600 flex items-center gap-2 mb-4">
+                      <ShieldAlert className="w-4 h-4 shrink-0 text-red-500" />
+                      <span>{customerError}</span>
+                    </div>
                   )}
 
                   <button
