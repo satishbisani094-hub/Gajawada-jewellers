@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { X, CheckCircle, ShieldAlert, Users, TrendingUp, HelpCircle, PlusCircle, Trash2 } from 'lucide-react';
 import { Product, CollectionCategory } from '../types';
 
-const REGISTERED_CUSTOMERS = [
-  { mobile: '9876543210', name: 'Mani Raman' },
-  { mobile: '9988776655', name: 'Satish Bisani' },
-  { mobile: '9000012345', name: 'Gajawada Guest' },
-  { mobile: '8888888888', name: 'Test Customer' },
-];
+const ADMIN_NUMBERS = ['8520016332', '9000012345', '7989245079'];
+
+const isValidPhoneNumber = (num: string) => {
+  const clean = num.replace(/\D/g, '');
+  if (clean.length === 12 && clean.startsWith('91')) return true;
+  if (clean.length === 11 && clean.startsWith('0')) return true;
+  return clean.length === 10;
+};
 
 interface AdminLoginProps {
   onClose: () => void;
@@ -46,8 +48,10 @@ export default function AdminLogin({
   const [customerError, setCustomerError] = useState('');
 
   // Store Owner Form State
-  const [username, setUsername] = useState('owner');
-  const [password, setPassword] = useState('');
+  const [ownerMobileNumber, setOwnerMobileNumber] = useState('');
+  const [ownerOtpSent, setOwnerOtpSent] = useState(false);
+  const [ownerOtpCode, setOwnerOtpCode] = useState('');
+  const [ownerGeneratedOtp, setOwnerGeneratedOtp] = useState('');
   const [ownerSuccess, setOwnerSuccess] = useState(currentUser?.type === 'owner');
   const [ownerError, setOwnerError] = useState('');
 
@@ -97,22 +101,8 @@ export default function AdminLogin({
     e.preventDefault();
     if (!fullName || !mobileNumber) return;
     
-    // Normalize entered number
-    const cleanMobile = mobileNumber.replace(/\D/g, '');
-    const normalizedEntered = cleanMobile.length > 10 && cleanMobile.startsWith('91') 
-      ? cleanMobile.slice(-10) 
-      : cleanMobile;
-      
-    const existingCustomer = REGISTERED_CUSTOMERS.find(c => {
-      const cleanReg = c.mobile.replace(/\D/g, '');
-      const normalizedReg = cleanReg.length > 10 && cleanReg.startsWith('91')
-        ? cleanReg.slice(-10)
-        : cleanReg;
-      return normalizedEntered === normalizedReg;
-    });
-
-    if (!existingCustomer) {
-      setCustomerError("This mobile number is not registered. Try standard mock number: 9876543210");
+    if (!isValidPhoneNumber(mobileNumber)) {
+      setCustomerError("Please enter a valid 10-digit mobile number.");
       return;
     }
 
@@ -129,27 +119,13 @@ export default function AdminLogin({
   const handleVerifyOTP = (e: React.FormEvent) => {
     e.preventDefault();
     if (!otpCode) return;
-    
-    // Normalize entered number
-    const cleanMobile = mobileNumber.replace(/\D/g, '');
-    const normalizedEntered = cleanMobile.length > 10 && cleanMobile.startsWith('91') 
-      ? cleanMobile.slice(-10) 
-      : cleanMobile;
-
-    const existingCustomer = REGISTERED_CUSTOMERS.find(c => {
-      const cleanReg = c.mobile.replace(/\D/g, '');
-      const normalizedReg = cleanReg.length > 10 && cleanReg.startsWith('91')
-        ? cleanReg.slice(-10)
-        : cleanReg;
-      return normalizedEntered === normalizedReg;
-    });
 
     if (otpCode === generatedOtp || otpCode === '1234') {
       setCustomerSuccess(true);
       setShowToast(false);
       onLoginSuccess({ 
         type: 'customer', 
-        name: existingCustomer ? existingCustomer.name : (fullName || 'Customer') 
+        name: fullName || 'Customer' 
       });
       setTimeout(() => {
         onClose();
@@ -159,15 +135,50 @@ export default function AdminLogin({
     }
   };
 
-  // 3. Handle Owner Login
-  const handleOwnerSubmit = (e: React.FormEvent) => {
+  // 3. Handle Owner OTP Request
+  const handleOwnerRequestOTP = (e: React.FormEvent) => {
     e.preventDefault();
-    if (username.trim() === 'owner' && password === 'gayawada@1234') {
+    if (!ownerMobileNumber) return;
+
+    if (!isValidPhoneNumber(ownerMobileNumber)) {
+      setOwnerError("Please enter a valid 10-digit mobile number.");
+      return;
+    }
+
+    // Normalize entered number
+    const cleanMobile = ownerMobileNumber.replace(/\D/g, '');
+    const normalizedEntered = cleanMobile.length > 10 && cleanMobile.startsWith('91') 
+      ? cleanMobile.slice(-10) 
+      : cleanMobile;
+
+    if (!ADMIN_NUMBERS.includes(normalizedEntered)) {
+      setOwnerError("This mobile number is not authorized for Admin access.");
+      return;
+    }
+
+    setOwnerError('');
+    // Generate a random 4-digit code
+    const code = Math.floor(1000 + Math.random() * 9000).toString();
+    setOwnerGeneratedOtp(code);
+    setOwnerOtpSent(true);
+    setToastMessage(`Admin OTP sent successfully! Enter ${code} to verify.`);
+    setShowToast(true);
+  };
+
+  // 4. Handle Owner OTP Verification
+  const handleOwnerVerifyOTP = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!ownerOtpCode) return;
+
+    if (ownerOtpCode === ownerGeneratedOtp || ownerOtpCode === '1234') {
       setOwnerSuccess(true);
       setOwnerError('');
       onLoginSuccess({ type: 'owner', name: 'Store Owner' });
+      setTimeout(() => {
+        onClose();
+      }, 2500);
     } else {
-      setOwnerError('Invalid secure access credentials.');
+      alert('Invalid OTP. Please enter the code shown in the notification.');
     }
   };
 
@@ -177,15 +188,65 @@ export default function AdminLogin({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 py-6 backdrop-blur-sm">
       <div className="w-full max-w-[460px] rounded-[28px] bg-white shadow-2xl overflow-hidden font-sans border border-neutral-100 relative">
         
-        {/* Close button in the top right of the card */}
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute top-6 right-6 text-neutral-400 hover:text-neutral-600 transition-colors p-1 z-10 cursor-pointer"
-          aria-label="Close portal"
-        >
-          <X className="w-5 h-5" />
-        </button>
+        {/* If logged in, show a close button in the top right of the card */}
+        {isUserLoggedIn && (
+          <button
+            type="button"
+            onClick={onClose}
+            className="absolute top-6 right-6 text-neutral-400 hover:text-neutral-600 transition-colors p-1 z-10 cursor-pointer"
+            aria-label="Close portal"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        )}
+
+        {/* TAB CONTROLS - Only show if not logged in */}
+        {!isUserLoggedIn && (
+          <div className="flex border-b border-neutral-200/80 relative">
+            <button
+              type="button"
+              onClick={() => {
+                if (!customerSuccess && !ownerSuccess) {
+                  setActiveTab('customer');
+                  setOwnerError('');
+                }
+              }}
+              className={`flex-1 py-4 text-center font-bold text-sm tracking-wide transition-all ${
+                activeTab === 'customer'
+                  ? 'text-[#065f46] border-b-[3px] border-[#065f46]'
+                  : 'text-neutral-500 hover:text-neutral-700 bg-neutral-50/50'
+              }`}
+              disabled={customerSuccess || ownerSuccess}
+            >
+              Customer Portal
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (!customerSuccess && !ownerSuccess) {
+                  setActiveTab('owner');
+                  setOwnerError('');
+                }
+              }}
+              className={`flex-1 py-4 text-center font-bold text-sm tracking-wide transition-all ${
+                activeTab === 'owner'
+                  ? 'text-[#ea580c] border-b-[3px] border-[#ea580c]'
+                  : 'text-neutral-500 hover:text-neutral-700 bg-neutral-50/50'
+              }`}
+              disabled={customerSuccess || ownerSuccess}
+            >
+              Store Owner
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 transition-colors p-1"
+              aria-label="Close portal"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+        )}
 
         {/* PORTAL BODY CONTAINER */}
         <div className="p-8">
@@ -306,129 +367,20 @@ export default function AdminLogin({
           {activeTab === 'owner' && (
             <div>
               {ownerSuccess ? (
-                <div className="space-y-5 animate-fadeIn text-neutral-800 relative">
-                  <div className="text-center border-b border-neutral-100 pb-3">
-                    <div className="flex items-center justify-center text-[#ea580c] mb-2">
-                      <CheckCircle className="w-10 h-10 stroke-[1.5]" />
-                    </div>
-                    <h3 className="text-lg font-bold text-neutral-900">Store Owner Admin Panel</h3>
-                    <p className="text-xs text-neutral-500 mt-0.5">Manage products in the live catalog.</p>
+                <div className="text-center py-6 animate-fadeIn">
+                  <div className="flex justify-center text-[#ea580c] mb-4">
+                    <CheckCircle className="w-16 h-16 stroke-[1.5]" />
                   </div>
-
-                  <div className="max-h-[420px] overflow-y-auto pr-1 space-y-5">
-                    
-                    {/* Add Product Form */}
-                    <form onSubmit={handleAddSubmit} className="space-y-3.5 border border-neutral-200/60 p-4 rounded-2xl bg-neutral-50">
-                      <h4 className="text-xs font-bold uppercase tracking-wider text-[#ea580c] text-left">Add New Product</h4>
-                      
-                      <label className="block space-y-1 text-xs font-semibold text-neutral-700 text-left">
-                        Product Name
-                        <input
-                          type="text"
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
-                          className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-xs text-neutral-800 outline-none focus:border-[#ea580c] focus:ring-1 focus:ring-[#ea580c]"
-                          placeholder="e.g. Kundan Necklace"
-                          required
-                        />
-                      </label>
-
-                      <label className="block space-y-1 text-xs font-semibold text-neutral-700 text-left">
-                        Category
-                        <select
-                          value={category}
-                          onChange={(e) => setCategory(e.target.value)}
-                          className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-xs text-neutral-800 outline-none focus:border-[#ea580c] focus:ring-1 focus:ring-[#ea580c]"
-                        >
-                          {categories.map((cat) => (
-                            <option key={cat.id} value={cat.id}>{cat.name}</option>
-                          ))}
-                        </select>
-                      </label>
-
-                      <label className="block space-y-1 text-xs font-semibold text-neutral-700 text-left">
-                        Image URL
-                        <input
-                          type="text"
-                          value={imageUrl}
-                          onChange={(e) => setImageUrl(e.target.value)}
-                          className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-xs text-neutral-800 outline-none focus:border-[#ea580c] focus:ring-1 focus:ring-[#ea580c]"
-                          placeholder="https://..."
-                        />
-                      </label>
-
-                      <div className="grid grid-cols-2 gap-3">
-                        <label className="block space-y-1 text-xs font-semibold text-neutral-700 text-left">
-                          Price (₹)
-                          <input
-                            type="number"
-                            value={price}
-                            onChange={(e) => setPrice(e.target.value)}
-                            className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-xs text-neutral-800 outline-none focus:border-[#ea580c] focus:ring-1 focus:ring-[#ea580c]"
-                            placeholder="e.g. 15000"
-                          />
-                        </label>
-                        <label className="block space-y-1 text-xs font-semibold text-neutral-700 text-left">
-                          Original Price (₹)
-                          <input
-                            type="number"
-                            value={originalPrice}
-                            onChange={(e) => setOriginalPrice(e.target.value)}
-                            className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-xs text-neutral-800 outline-none focus:border-[#ea580c] focus:ring-1 focus:ring-[#ea580c]"
-                            placeholder="e.g. 18000"
-                          />
-                        </label>
-                      </div>
-
-                      <button
-                        type="submit"
-                        className="w-full rounded-lg bg-[#ea580c] py-2 text-xs font-bold text-white transition hover:bg-[#d94e06] active:scale-[0.99]"
-                      >
-                        Add Product to Collection
-                      </button>
-                    </form>
-
-                    {/* Inventory List */}
-                    <div className="space-y-2 text-left">
-                      <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-500">Live Inventory ({products.length})</h4>
-                      <div className="divide-y divide-neutral-100 border border-neutral-200/60 rounded-2xl bg-neutral-50 p-2 space-y-1.5">
-                        {products.length > 0 ? (
-                          products.map((p) => (
-                            <div key={p.id} className="flex justify-between items-center text-xs py-1.5 px-2">
-                              <div>
-                                <p className="font-semibold text-neutral-900">{p.name}</p>
-                                <p className="text-[10px] text-neutral-500">{p.category} {p.price && `• ₹${p.price.toLocaleString('en-IN')}`}</p>
-                              </div>
-                              <button
-                                type="button"
-                                onClick={() => onDeleteProduct?.(p.id)}
-                                className="text-red-500 hover:text-red-700 p-1 transition"
-                                title="Delete product"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </div>
-                          ))
-                        ) : (
-                          <p className="text-[10px] text-neutral-400 p-4 text-center">No products in inventory.</p>
-                        )}
-                      </div>
-                    </div>
-
+                  <h3 className="text-xl font-bold text-neutral-900">Admin Authenticated</h3>
+                  <p className="text-sm text-neutral-500 mt-2">
+                    Welcome, <span className="font-semibold text-neutral-800">Store Owner</span>. Launching secure control center...
+                  </p>
+                  <div className="mt-6 flex justify-center">
+                    <div className="w-6 h-6 border-2 border-[#ea580c] border-t-transparent rounded-full animate-spin"></div>
                   </div>
-
-                  <button
-                    onClick={() => {
-                      setOwnerSuccess(false);
-                      setPassword('');
-                    }}
-                    className="w-full rounded-xl bg-neutral-900 py-3 text-xs font-bold text-white transition hover:bg-neutral-800 mt-2"
-                  >
-                    Logout Portal Session
-                  </button>
                 </div>
               ) : (
-                <form onSubmit={handleOwnerSubmit} className="space-y-5 animate-fadeIn">
+                <form onSubmit={ownerOtpSent ? handleOwnerVerifyOTP : handleOwnerRequestOTP} className="space-y-5 animate-fadeIn">
                   {/* Silhouette and shield overlay */}
                   <div className="text-center mb-6">
                     <div className="flex items-center justify-center mb-4 text-[#ea580c]">
@@ -447,35 +399,40 @@ export default function AdminLogin({
                       </div>
                     </div>
                     <h3 className="text-xl font-bold text-neutral-900">Store Owner Sign In</h3>
+                    <p className="text-xs text-neutral-500 mt-1">Authorized access only. Verified via secure OTP.</p>
                   </div>
 
                   <label className="block space-y-2 text-sm font-semibold text-neutral-700">
-                    Phone / Username
+                    Mobile Number
                     <input
-                      type="text"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                      className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-sm text-neutral-800 outline-none transition focus:border-[#ea580c] focus:ring-1 focus:ring-[#ea580c]"
-                      placeholder="owner"
+                      type="tel"
+                      value={ownerMobileNumber}
+                      onChange={(e) => setOwnerMobileNumber(e.target.value.replace(/[^\d+]/g, ''))}
+                      disabled={ownerOtpSent}
+                      className="w-full rounded-xl border border-[#ea580c]/30 bg-white px-4 py-3 text-sm text-neutral-800 placeholder-neutral-400 outline-none transition focus:border-[#ea580c] focus:ring-1 focus:ring-[#ea580c] disabled:bg-neutral-50 disabled:text-neutral-500"
+                      placeholder="e.g. 85200 16332"
                       required
                     />
                   </label>
 
-                  <label className="block space-y-2 text-sm font-semibold text-neutral-700">
-                    Access Password
-                    <input
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-sm text-neutral-800 outline-none transition focus:border-[#ea580c] focus:ring-1 focus:ring-[#ea580c]"
-                      placeholder="••••••••"
-                      required
-                    />
-                  </label>
+                  {ownerOtpSent && (
+                    <label className="block space-y-2 text-sm font-semibold text-neutral-700 animate-fadeIn">
+                      Enter 4-Digit Admin OTP
+                      <input
+                        type="text"
+                        maxLength={4}
+                        value={ownerOtpCode}
+                        onChange={(e) => setOwnerOtpCode(e.target.value.replace(/\D/g, ''))}
+                        className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-sm text-neutral-800 placeholder-neutral-400 outline-none transition focus:border-[#ea580c] focus:ring-1 focus:ring-[#ea580c]"
+                        placeholder="1234"
+                        required
+                      />
+                    </label>
+                  )}
 
                   {ownerError && (
-                    <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-xs text-red-600 flex items-center gap-2">
-                      <ShieldAlert className="w-4 h-4 shrink-0 text-red-500" />
+                    <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-xs text-red-600 flex items-center gap-2 mb-4">
+                      <ShieldAlert className="w-4.5 h-4.5 shrink-0 text-red-500" />
                       <span>{ownerError}</span>
                     </div>
                   )}
@@ -484,14 +441,27 @@ export default function AdminLogin({
                     type="submit"
                     className="w-full rounded-xl bg-[#ea580c] py-3.5 text-sm font-bold text-white transition hover:bg-[#d94e06] active:scale-[0.99] shadow-md shadow-[#ea580c]/15"
                   >
-                    Secure Owner Portal
+                    {ownerOtpSent ? 'Verify & Authenticate' : 'Request OTP'}
                   </button>
 
-                  <div className="flex justify-between items-center text-[10px] text-neutral-400 font-medium">
-                    <span className="flex items-center gap-1">
-                      <HelpCircle className="w-3 h-3 text-[#ea580c]" /> Username: owner
+                  {ownerOtpSent && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setOwnerOtpSent(false);
+                        setShowToast(false);
+                        setOwnerOtpCode('');
+                      }}
+                      className="w-full text-center text-xs text-neutral-500 hover:text-neutral-700 transition"
+                    >
+                      Resend OTP / Edit Info
+                    </button>
+                  )}
+
+                  <div className="flex justify-between items-center text-[9px] text-neutral-400 font-medium pt-3 border-t border-neutral-100">
+                    <span className="flex items-center gap-1.5">
+                      <HelpCircle className="w-3.5 h-3.5 text-[#ea580c]" /> Auth Numbers: 8520016332, 9000012345, 7989245079
                     </span>
-                    <span>Password: gayawada@1234</span>
                   </div>
                 </form>
               )}
