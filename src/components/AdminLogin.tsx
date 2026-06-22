@@ -188,65 +188,15 @@ export default function AdminLogin({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 py-6 backdrop-blur-sm">
       <div className="w-full max-w-[460px] rounded-[28px] bg-white shadow-2xl overflow-hidden font-sans border border-neutral-100 relative">
         
-        {/* If logged in, show a close button in the top right of the card */}
-        {isUserLoggedIn && (
-          <button
-            type="button"
-            onClick={onClose}
-            className="absolute top-6 right-6 text-neutral-400 hover:text-neutral-600 transition-colors p-1 z-10 cursor-pointer"
-            aria-label="Close portal"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        )}
-
-        {/* TAB CONTROLS - Only show if not logged in */}
-        {!isUserLoggedIn && (
-          <div className="flex border-b border-neutral-200/80 relative">
-            <button
-              type="button"
-              onClick={() => {
-                if (!customerSuccess && !ownerSuccess) {
-                  setActiveTab('customer');
-                  setOwnerError('');
-                }
-              }}
-              className={`flex-1 py-4 text-center font-bold text-sm tracking-wide transition-all ${
-                activeTab === 'customer'
-                  ? 'text-[#065f46] border-b-[3px] border-[#065f46]'
-                  : 'text-neutral-500 hover:text-neutral-700 bg-neutral-50/50'
-              }`}
-              disabled={customerSuccess || ownerSuccess}
-            >
-              Customer Portal
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                if (!customerSuccess && !ownerSuccess) {
-                  setActiveTab('owner');
-                  setOwnerError('');
-                }
-              }}
-              className={`flex-1 py-4 text-center font-bold text-sm tracking-wide transition-all ${
-                activeTab === 'owner'
-                  ? 'text-[#ea580c] border-b-[3px] border-[#ea580c]'
-                  : 'text-neutral-500 hover:text-neutral-700 bg-neutral-50/50'
-              }`}
-              disabled={customerSuccess || ownerSuccess}
-            >
-              Store Owner
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 transition-colors p-1"
-              aria-label="Close portal"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-        )}
+        {/* Close button in the top right of the card */}
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute top-6 right-6 text-neutral-400 hover:text-neutral-600 transition-colors p-1 z-10 cursor-pointer"
+          aria-label="Close portal"
+        >
+          <X className="w-5 h-5" />
+        </button>
 
         {/* PORTAL BODY CONTAINER */}
         <div className="p-8">

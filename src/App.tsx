@@ -201,9 +201,8 @@ export default function App() {
   };
 
   const handleOpenAdminDirectly = () => {
-    setCurrentUser({ type: 'owner', name: 'Store Owner' });
     setLoginTab('owner');
-    setIsLoginOpen(false); // No need to keep login modal open
+    setIsLoginOpen(true);
   };
 
   if (currentUser?.type === 'owner') {
