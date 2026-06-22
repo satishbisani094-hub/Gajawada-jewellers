@@ -15,7 +15,6 @@ import AdminLogin from './components/AdminLogin';
 import AdminDashboard from './components/AdminDashboard';
 import CartDrawer from './components/CartDrawer';
 import WhyChooseUs from './components/WhyChooseUs';
-import FeaturedProducts from './components/FeaturedProducts';
 import VirtualConsultant from './components/VirtualConsultant';
 import Services from './components/Services';
 import LocationMap from './components/LocationMap';
@@ -272,13 +271,6 @@ export default function App() {
         {/* Luxury Brand Pillar Credentials */}
         <WhyChooseUs />
 
-        {/* High-Fidelity Masterpiece Spotlight */}
-        <FeaturedProducts
-          products={products}
-          shortlist={shortlist}
-          onToggleShortlist={handleToggleShortlist}
-          onOpenInquiryModal={handleOpenInquiryModal}
-        />
 
         {/* Interactive Virtual Jewelry Stylist Assistant */}
         <VirtualConsultant products={products} onOpenInquiryModal={handleOpenInquiryModal} />
