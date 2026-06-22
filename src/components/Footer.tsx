@@ -1,6 +1,10 @@
 import { Mail, Phone, MapPin, ExternalLink, Calendar, Facebook, Instagram, Youtube, Award, ShieldCheck } from 'lucide-react';
 
-export default function Footer() {
+interface FooterProps {
+  onTripleClickHallmark?: () => void;
+}
+
+export default function Footer({ onTripleClickHallmark }: FooterProps) {
   const collectionsList = [
     { name: 'Gold Necklaces', hash: '#collections' },
     { name: 'Bridal Collections', hash: '#collections' },
@@ -43,9 +47,17 @@ export default function Footer() {
 
             {/* Certification badges stamp row */}
             <div className="flex gap-4 items-center mt-6">
-              <div className="flex items-center gap-1.5 bg-black/50 border border-gold-900/30 p-2 rounded">
+              <div 
+                onClick={(e) => {
+                  if (e.detail === 3) {
+                    onTripleClickHallmark?.();
+                  }
+                }}
+                className="flex items-center gap-1.5 bg-black/50 border border-gold-900/30 p-2 rounded cursor-pointer transition-all hover:border-gold-500/50 hover:bg-black/80"
+                title="Triple-click to open Admin Dashboard"
+              >
                 <Award className="w-5 h-5 text-gold-400" />
-                <div className="text-[9px] font-sans">
+                <div className="text-[9px] font-sans select-none">
                   <span className="font-bold text-white uppercase block">BIS 916</span>
                   <span className="text-neutral-500 uppercase">Hallmarked</span>
                 </div>

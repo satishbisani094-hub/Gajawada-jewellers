@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Trash2, ShoppingBag, Check, Send, Sparkles } from 'lucide-react';
 import { Product } from '../types';
 

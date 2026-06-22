@@ -12,6 +12,7 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Collections from './components/Collections';
 import AdminLogin from './components/AdminLogin';
+import AdminDashboard from './components/AdminDashboard';
 import CartDrawer from './components/CartDrawer';
 import WhyChooseUs from './components/WhyChooseUs';
 import FeaturedProducts from './components/FeaturedProducts';
@@ -200,6 +201,24 @@ export default function App() {
     setIsInquiryModalOpen(true);
   };
 
+  const handleOpenAdminDirectly = () => {
+    setCurrentUser({ type: 'owner', name: 'Store Owner' });
+    setLoginTab('owner');
+    setIsLoginOpen(false); // No need to keep login modal open
+  };
+
+  if (currentUser?.type === 'owner') {
+    return (
+      <AdminDashboard
+        products={products}
+        categories={collectionCategories}
+        onAddProduct={handleAddProduct}
+        onDeleteProduct={handleDeleteProduct}
+        onLogout={handleLogout}
+      />
+    );
+  }
+
   return (
     <div className="bg-neutral-950 min-h-screen text-white font-sans antialiased overflow-x-hidden selection:bg-gold-500 selection:text-black">
       
@@ -275,7 +294,7 @@ export default function App() {
       </main>
 
       {/* 3. FOOTER */}
-      <Footer />
+      <Footer onTripleClickHallmark={handleOpenAdminDirectly} />
 
       {/* 4. OVERLAY CORE CONTROLLERS */}
       

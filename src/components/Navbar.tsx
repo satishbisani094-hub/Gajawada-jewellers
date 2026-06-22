@@ -35,7 +35,6 @@ export default function Navbar({
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [rates, setRates] = useState<LiveRate[]>(liveRates);
-  const [isLoginDropdownOpen, setIsLoginDropdownOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
 
   // Close dropdowns on clicking outside
@@ -43,7 +42,6 @@ export default function Navbar({
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       if (!target.closest('#navbar-login-container') && !target.closest('#navbar-user-container')) {
-        setIsLoginDropdownOpen(false);
         setIsUserDropdownOpen(false);
       }
     };
@@ -224,39 +222,13 @@ export default function Navbar({
               <div className="relative" id="navbar-login-container">
                 <button
                   type="button"
-                  onClick={() => setIsLoginDropdownOpen(!isLoginDropdownOpen)}
+                  onClick={() => onOpenAdmin('customer')}
                   className="inline-flex items-center gap-1.5 rounded-full border border-[#046a38]/20 bg-[#e6f4ea] px-4 py-1.5 text-xs font-sans font-bold text-[#065f46] hover:bg-[#d4edd9] active:scale-[0.98] transition-all select-none"
                   id="navbar-login-btn"
                 >
                   <User className="w-4 h-4 fill-none" />
                   <span>Login</span>
                 </button>
-
-                {/* Dropdown Options */}
-                {isLoginDropdownOpen && (
-                  <div className="absolute top-[130%] right-0 w-44 bg-white border border-neutral-200/80 rounded-2xl shadow-xl p-1.5 z-[60] overflow-hidden text-neutral-800 animate-fadeIn">
-                    <button
-                      onClick={() => {
-                        onOpenAdmin('customer');
-                        setIsLoginDropdownOpen(false);
-                      }}
-                      className="w-full text-left px-3 py-2 rounded-xl text-[11px] font-bold font-sans flex items-center gap-2 hover:bg-[#e6f4ea] text-[#065f46] transition-colors"
-                    >
-                      <User className="w-3.5 h-3.5 text-[#065f46]" />
-                      <span>Customer Portal</span>
-                    </button>
-                    <button
-                      onClick={() => {
-                        onOpenAdmin('owner');
-                        setIsLoginDropdownOpen(false);
-                      }}
-                      className="w-full text-left px-3 py-2 rounded-xl text-[11px] font-bold font-sans flex items-center gap-2 hover:bg-[#fdf2e9] text-[#ea580c] transition-colors border-t border-neutral-100/50"
-                    >
-                      <Lock className="w-3.5 h-3.5 text-[#ea580c]" />
-                      <span>Store Owner</span>
-                    </button>
-                  </div>
-                )}
               </div>
             )}
 
